@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>BankApi Müşteriler</title>
+</head>
+<body>
+    <h1>Müşteri Yönetimi</h1>
+
+    <h2>Kayıt Ol</h2>
+
+    <form id="registerForm">
+        <input id="registerUserName" placeholder="Kullanıcı adı" required>
+        <input id="registerPassword" type="password" placeholder="Şifre" required>
+        <button type="submit">Kayıt Ol</button>
+    </form>
+
+    <h2>Giriş Yap</h2>
+
+    <form id="loginForm">
+        <input id="loginUserName" placeholder="Kullanıcı adı" required>
+        <input id="loginPassword" type="password" placeholder="Şifre" required>
+        <button type="submit">Giriş Yap</button>
+    </form>
+
+    <hr>
+
+    <h2>Müşteri Ekle / Güncelle</h2>
+
+    <form id="musteriForm">
+        <input type="hidden" id="musteriId">
+
+        <input id="fullName" placeholder="Ad Soyad" required>
+        <input id="email" type="email" placeholder="E-posta" required>
+        <input id="phone" placeholder="Telefon" required>
+
+        <button type="submit" id="kaydetButton">Müşteri Ekle</button>
+
+        <button type="button" id="iptalButton"
+                onclick="formuTemizle()" hidden>
+            İptal
+        </button>
+    </form>
+
+    <button onclick="musterileriGetir()">Müşterileri Getir</button>
+
+    <ul id="musteriListesi"></ul>
+
+    <script>
+        async function registerOl() {
+            const user = {
+                userName: document.getElementById("registerUserName").value,
+                password: document.getElementById("registerPassword").value
+            };
+
+            const cevap = await fetch("/api/v1/auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
+            });
+
+            const sonuc = await cevap.json();
+
+            if (cevap.ok) {
+                alert("Kayıt başarılı.");
+                document.getElementById("registerForm").reset();
+            } else {
+                alert(sonuc.message || "Kayıt başarısız.");
+            }
+        }
+
+        async function loginOl() {
+            const user = {
+                userName: document.getElementById("loginUserName").value,
+                password: document.getElementById("loginPassword").value
+            };
+
+            const cevap = await fetch("/api/v1/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
+            });
+
+            const sonuc = await cevap.json();
+
+            if (cevap.ok) {
+                alert("Giriş başarılı.");
+                document.getElementById("loginForm").reset();
+            } else {
+                alert(sonuc.message || "Giriş başarısız.");
+            }
+        }
+
+        document.getElementById("registerForm")
+            .addEventListener("submit", function (event) {
+                event.preventDefault();
+                registerOl();
+            });
+
+        document.getElementById("loginForm")
+            .addEventListener("submit", function (event) {
+                event.preventDefault();
+                loginOl();
+            });
+
+        async function musterileriGetir() {
+            const cevap = await fetch("/api/v1/customers");
+            const musteriler = await cevap.json();
+
+            const liste = document.getElementById("musteriListesi");
+            liste.innerHTML = "";
+
+            musteriler.forEach(musteri => {
+                const satir = document.createElement("li");
+
+                satir.innerHTML = `
+                    ${musteri.fullName} -
+                    ${musteri.email} -
+                    ${musteri.phone}
+
+                    <button onclick="musteriDuzenle(${musteri.id})">
+                        Düzenle
+                    </button>
+
+                    <button onclick="musteriSil(${musteri.id})">
+                        Sil
+                    </button>
+                `;
+
+                liste.appendChild(satir);
+            });
+        }
+
+        async function musteriDuzenle(id) {
+            const cevap = await fetch(`/api/v1/customers/${id}`);
+            const musteri = await cevap.json();
+
+            document.getElementById("musteriId").value = musteri.id;
+            document.getElementById("fullName").value = musteri.fullName;
+            document.getElementById("email").value = musteri.email;
+            document.getElementById("phone").value = musteri.phone;
+
+            document.getElementById("kaydetButton").textContent =
+                "Müşteriyi Güncelle";
+
+            document.getElementById("iptalButton").hidden = false;
+        }
+
+        async function musteriSil(id) {
+            const cevap = await fetch(`/api/v1/customers/${id}`, {
+                method: "DELETE"
+            });
+
+            if (cevap.ok) {
+                alert("Müşteri silindi.");
+                musterileriGetir();
+            } else {
+                alert("Müşteri silinemedi.");
+            }
+        }
+
+        document.getElementById("musteriForm")
+            .addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const id = document.getElementById("musteriId").value;
+
+                const musteri = {
+                    fullName: document.getElementById("fullName").value,
+                    email: document.getElementById("email").value,
+                    phone: document.getElementById("phone").value
+                };
+
+                const url = id
+                    ? `/api/v1/customers/${id}`
+                    : "/api/v1/customers";
+
+                const method = id ? "PUT" : "POST";
+
+                const cevap = await fetch(url, {
+                    method: method,
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(musteri)
+                });
+
+                if (cevap.ok) {
+                    alert(id
+                        ? "Müşteri güncellendi."
+                        : "Müşteri eklendi.");
+
+                    formuTemizle();
+                    musterileriGetir();
+                } else {
+                    alert("İşlem başarısız.");
+                }
+            });
+
+        function formuTemizle() {
+            document.getElementById("musteriForm").reset();
+            document.getElementById("musteriId").value = "";
+
+            document.getElementById("kaydetButton").textContent =
+                "Müşteri Ekle";
+
+            document.getElementById("iptalButton").hidden = true;
+        }
+    </script>
+</body>
+</html>
