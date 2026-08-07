@@ -685,22 +685,23 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
         }
 
         if (HasAny(text, "nakitcek", "paracek", "atmnakitcek", "hesaptancekim")) return "Para Çekme";
+        if (HasAny(text, "ucreti", "komisyon", "bsmv", "masraf", "hizmetbedeli", "kartaidati", "hesapisletim", "poskomisyon")) return "Komisyon / Ücret";
         if (HasAny(text, "gidenfast", "gidenhavale", "gideneft", "paratransferi", "havale", "eft")) return "Para Transferi";
         if (HasAny(text, "market", "bim", "a101", "migros", "carrefour", "carrefoursa", "sok", "sokmarket", "macrocenter", "filemarket", "hakmar", "onurmarket", "bizimtop", "metromarket", "seçmarket")) return "Market";
-        if (HasAny(text, "kafe", "cafe", "restoran", "restaurant", "lokanta", "yemek", "kahve", "pizza", "burger", "dondurma", "mcdonalds", "burgerking", "kfc", "dominos", "getir", "yemeksepeti", "starbucks", "kahvedunyasi", "bigchefs", "simit", "pastane", "firin", "kasap", "balik", "cigkofte")) return "Yemek / Kafe";
-        if (HasAny(text, "trendyol", "hepsiburada", "amazon", "alisveris", "eticaret", "online", "siparis", "n11", "sahibinden", "dolap", "etsy", "shopier", "lcwaikiki")) return "Alışveriş";
+        if (HasAny(text, "kafe", "cafe", "restoran", "restaurant", "lokanta", "yemek", "kahve", "pizza", "burger", "dondurma", "nido", "mcdonalds", "burgerking", "kfc", "dominos", "getir", "yemeksepeti", "starbucks", "kahvedunyasi", "bigchefs", "simit", "pastane", "firin", "kasap", "etvetavuk", "balik", "cigkofte")) return "Yemek / Kafe";
+        if (HasAny(text, "trendyol", "hepsiburada", "amazon", "iyzico", "alisveris", "eticaret", "online", "siparis", "n11", "sahibinden", "dolap", "etsy", "shopier", "lcwaikiki")) return "Alışveriş";
         if (HasAny(text, "giyim", "kiyafet", "ayakkabi", "zara", "koton", "mavi", "defacto", "boyner", "hm", "hummel", "nike", "adidas", "puma", "stradivarius", "pullandbear", "bershka", "gap")) return "Giyim";
         if (HasAny(text, "spor", "fitness", "gym", "pilates", "yoga", "yuzme", "futbol", "basketbol", "tenis", "halisaha", "decathlon", "macfit", "spor salonu", "formasalonu", "voleybol", "kayak", "kosu")) return "Spor";
         if (HasAny(text, "fatura", "elektrik", "elektrikdagitim", "su", "dogalgaz", "internet", "telefon", "gsm", "avea", "turkcell", "vodafone", "turktelekom", "superonline", "digiturk", "dsmart")) return "Fatura";
         if (HasAny(text, "kira", "kirasi", "konutkirasi", "isyeri kirasi")) return "Kira";
-        if (HasAny(text, "metro", "otobus", "otocar", "taksi", "akaryakit", "petrol", "petrolgaz", "benzin", "motorin", "dizel", "lpg", "shell", "opet", "bp", "total", "goodyear", "lastik", "servis", "oto", "istanbulkart", "ankarakart", "istanbululasim", "istasyon", "gaz", "ispark", "otopark", "uber", "bitaksi", "marti", "scooter")) return "Ulaşım";
+        if (HasAny(text, "metro", "otobus", "otocar", "taksi", "akaryakit", "petrol", "petrolgaz", "aytemiz", "petrolc", "benzin", "motorin", "dizel", "lpg", "shell", "opet", "bp", "total", "goodyear", "lastik", "servis", "oto", "istanbulkart", "ankarakart", "istanbululasim", "istasyon", "gaz", "ispark", "otopark", "uber", "bitaksi", "marti", "scooter")) return "Ulaşım";
         if (HasAny(text, "abonelik", "netflix", "spotify", "youtube", "dijital", "apple", "primevideo", "disney", "blutv", "exxen", "gamepass", "icloud", "googleone", "uyelik")) return "Abonelik";
         if (HasAny(text, "saglik", "eczane", "hastane", "doktor", "klinik", "medikal", "dishekimi", "disci", "optik", "lens", "veteriner", "laboratuvar", "checkup", "ilac", "muayene")) return "Sağlık";
-        if (HasAny(text, "kitap", "kurs", "egitim", "egitimodeme", "okul", "universite", "kolej", "dershane", "etut", "sinav", "yks", "lise", "ilkokul", "yukseklisans", "dilkursu", "udemy", "coursera", "sertifika", "kirtasiye")) return "Eğitim";
+        if (HasAny(text, "kitap", "kitapdunyasi", "kitapyurdu", "kurs", "egitim", "egitimodeme", "okul", "universite", "kolej", "dershane", "etut", "sinav", "yks", "lise", "ilkokul", "yukseklisans", "dilkursu", "udemy", "coursera", "sertifika", "kirtasiye")) return "Eğitim";
         if (HasAny(text, "elektronik", "teknoloji", "bilgisayar", "telefon", "vatan", "teknosa", "mediamarkt", "samsung", "huawei", "lenovo", "asus", "playstation", "xbox", "steam", "epicgames", "yazilim", "hosting", "domain")) return "Teknoloji";
         if (HasAny(text, "ev", "mobilya", "dekorasyon", "emlak", "ikea", "koctas", "bauhaus", "englishhome", "madamecoco", "zucaciye", "beyazesya", "klima", "tesisat", "temizlik", "perde", "halı", "hali")) return "Ev";
         if (HasAny(text, "vergi", "resmi", "harc", "noter", "mahkeme", "belediye", "trafikcezasi", "pasaport", "ehliyet", "tapu", "sgkprim")) return "Vergi / Resmi";
-        if (HasAny(text, "ucreti", "komisyon", "bsmv", "masraf", "hizmetbedeli", "kartaidati", "hesapisletim", "poskomisyon")) return "Komisyon / Ücret";
+        if (HasAny(text, "qr")) return "Para Transferi";
         return "Diğer";
     }
 
