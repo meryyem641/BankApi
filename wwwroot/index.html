@@ -2,214 +2,2066 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>BankApi Müşteriler</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Finansal Bütçe ve Harcama Yönetim Sistemi</title>
+    <style>
+        :root { --navy: #21113f; --blue: #7c3aed; --bg: #f3f6fb; --border: #e2e8f0; --muted: #64748b; }
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; margin: 0; color: #172033; background-image: linear-gradient(rgba(5, 24, 48, .68), rgba(5, 24, 48, .78)), url('/images/bank-background.png'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; }
+        .topbar { background: var(--navy); color: white; padding: 16px 5%; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+        .brand { font-size: 20px; font-weight: 700; letter-spacing: .2px; }
+        .topbar small { color: #cbd5e1; display: block; margin-top: 3px; }
+        .topbar-actions { display: flex; align-items: center; gap: 12px; }
+        .topbar #session { color: #dbeafe; margin: 0; }
+        #profileTopButton { display: none; background: rgba(255, 255, 255, .12); color: white; border-color: rgba(255, 255, 255, .45); }
+        #profileTopButton:hover { background: rgba(255, 255, 255, .22); border-color: white; }
+        main { max-width: 1180px; margin: 24px auto; padding: 0 20px 40px; }
+        .intro { margin-bottom: 18px; }
+        .intro h1 { margin: 0 0 6px; font-size: 28px; }
+        .intro p { margin: 0; color: #e2e8f0; }
+        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+        section { background: rgba(255, 255, 255, .94); border: 1px solid rgba(255, 255, 255, .65); border-radius: 14px; padding: 20px; margin: 0; box-shadow: 0 8px 24px rgba(2, 12, 27, .18); backdrop-filter: blur(3px); }
+        #authSection { max-width: 560px; margin: 72px auto 0; padding: 34px 38px 30px; border-radius: 20px; background: rgba(255, 255, 255, .97); box-shadow: 0 22px 60px rgba(2, 12, 27, .32); animation: cardEnter .65s ease-out both; }
+        .auth-heading { text-align: center; margin-bottom: 26px; }
+        .auth-logo { width: 52px; height: 52px; display: grid; place-items: center; margin: 0 auto 16px; border-radius: 16px; color: white; background: linear-gradient(135deg, #a855f7, #4c1d95); font-size: 24px; font-weight: 800; box-shadow: 0 8px 18px rgba(124, 58, 237, .28); animation: logoFloat 3s ease-in-out infinite; }
+        .auth-heading h2 { margin: 0 0 8px; font-size: 27px; color: #102a4c; }
+        .auth-heading p { margin: 0; color: var(--muted); font-size: 14px; }
+        .login-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .login-choice[hidden], #loginForm[hidden] { display: none; }
+        .login-choice button { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-height: 142px; padding: 18px; border-radius: 14px; border-color: #d7e0ec; background: linear-gradient(145deg, #fbfdff, #f2f7fd); color: #102a4c; text-align: left; transition: transform .2s, border-color .2s, box-shadow .2s; }
+        .login-choice button { animation: choiceEnter .5s ease-out both; }
+        .login-choice button:nth-child(2) { animation-delay: .1s; }
+        .login-choice button:hover { transform: translateY(-3px); border-color: var(--blue); background: white; box-shadow: 0 10px 22px rgba(124, 58, 237, .15); }
+        button:active { transform: scale(.98); }
+        .login-choice-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; color: white; background: linear-gradient(135deg, #a855f7, #4c1d95); font-size: 19px; }
+        .choice-title { font-size: 15px; }
+        .choice-desc { color: var(--muted); font-size: 12px; font-weight: 400; line-height: 1.35; }
+        .secure-note { margin: 22px 0 0; padding-top: 15px; border-top: 1px solid #e7edf5; color: #64748b; font-size: 12px; text-align: center; }
+        .secure-note span { color: #16a34a; font-weight: 700; }
+        @keyframes cardEnter { from { opacity: 0; transform: translateY(18px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes choiceEnter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes logoFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; } }
+        /* Premium banka paneli */
+        body { background-color: #071a31; background-image: radial-gradient(circle at 80% 10%, rgba(34, 105, 210, .12), transparent 30%), linear-gradient(135deg, rgba(4, 21, 43, .45), rgba(8, 31, 57, .34)), url('/images/bank-background.png'); color: #172033; }
+        .topbar { position: sticky; top: 0; z-index: 20; min-height: 76px; padding: 15px 34px 15px 40px; background: rgba(7, 26, 49, .9); border-bottom: 1px solid rgba(148, 163, 184, .16); backdrop-filter: blur(16px); }
+        .brand { letter-spacing: -.3px; }
+        .topbar small { color: #8fa7c4; }
+        .topbar-actions { gap: 10px; }
+        .topbar #session { padding: 8px 13px; border: 1px solid rgba(148, 163, 184, .18); border-radius: 999px; color: #b9cbe0; font-size: 13px; }
+        .sidebar { position: fixed; z-index: 15; top: 76px; bottom: 0; left: 0; width: 236px; display: none; flex-direction: column; padding: 28px 14px; background: rgba(5, 23, 45, .92); border-right: 1px solid rgba(148, 163, 184, .13); backdrop-filter: blur(18px); }
+        .signed-in .sidebar { display: flex; }
+        .sidebar-label { padding: 0 13px 10px; color: #6e89a8; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+        .sidebar button { display: flex; align-items: center; width: 100%; margin: 3px 0; padding: 12px 13px; border: 1px solid transparent; border-radius: 10px; color: #a9bdd4; background: transparent; text-align: left; font-size: 14px; transition: background .2s, color .2s, transform .2s; }
+        .sidebar button:hover, .sidebar button.active { color: white; background: linear-gradient(90deg, rgba(124, 58, 237, .3), rgba(124, 58, 237, .08)); border-color: rgba(192, 132, 252, .25); transform: translateX(2px); }
+        .sidebar-icon { width: 28px; color: #c084fc; font-size: 17px; }
+        main { max-width: 1220px; padding: 30px 28px 60px; }
+        .signed-in main { max-width: none; margin: 0 0 0 236px; padding: 34px 42px 70px; }
+        .intro { max-width: 1220px; margin: 0 auto 24px; }
+        .intro h1 { color: white; font-size: 30px; letter-spacing: -.5px; }
+        .intro p { color: #a9bdd4; }
+        section { border: 1px solid rgba(226, 232, 240, .78); border-radius: 18px; padding: 26px; box-shadow: 0 16px 40px rgba(2, 12, 27, .16); }
+        section[id] { scroll-margin-top: 104px; }
+        section h2 { color: #102a4c; font-size: 21px; letter-spacing: -.25px; }
+        .profile-card, .admin-stat { border-radius: 15px; }
+        #profileSection, #approvalSection { background: rgba(255, 255, 255, .97); }
+        #adminDashboardSection { background: rgba(255, 255, 255, .97); }
+        #customerSection, #accountSection, #userSection, #transferSection { background: rgba(255, 255, 255, .96); }
+        .grid { gap: 22px; }
+        table { border-radius: 10px; overflow: hidden; }
+        th { background: #f5f8fc; color: #64748b; }
+        td, th { padding: 13px 10px; }
+        .sidebar .admin-only { display: none; }
+        .signed-in .sidebar .admin-only { display: flex; }
+        @media (max-width: 860px) { .sidebar { position: static; width: 100%; height: auto; padding: 10px 14px; flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid rgba(148, 163, 184, .13); } .sidebar-label { display: none; } .sidebar button { min-width: max-content; width: auto; } .signed-in main { margin-left: 0; padding: 24px 16px 50px; } .topbar { padding: 14px 18px; } .topbar small { display: none; } }
+        .login-mode-title { margin: 0 0 12px; color: #102a4c; font-size: 17px; }
+        .back-to-choice { width: auto !important; margin-top: 0 !important; padding: 0 !important; border: 0 !important; color: var(--muted) !important; background: transparent !important; font-size: 13px; font-weight: 400 !important; }
+        section.wide { grid-column: 1 / -1; }
+        section h2 { margin: 0 0 14px; font-size: 19px; }
+        section h3 { margin: 18px 0 8px; font-size: 15px; }
+        form { display: flex; flex-wrap: wrap; gap: 8px; }
+        #authSection form { gap: 12px; }
+        #loginForm { display: grid; grid-template-columns: 1fr; align-items: stretch; margin-top: 22px; }
+        #loginForm .login-mode-title { width: 100%; margin: 0 0 2px; padding: 0 2px 10px; border-bottom: 1px solid #e7edf5; font-size: 15px; font-weight: 700; }
+        #loginForm .password-field { width: 100%; }
+        #loginForm > button:not(.back-to-choice) { width: 100%; min-height: 48px; margin-top: 2px; }
+        #loginForm .back-to-choice { justify-self: start; }
+        input, select, button { border: 1px solid #cbd5e1; border-radius: 7px; padding: 10px 12px; font: inherit; }
+        input { min-width: 150px; flex: 1; }
+        #authSection input { width: 100%; min-width: 0; padding: 13px 14px; border-radius: 10px; background: #f8fafc; border-color: #d7e0ec; transition: border-color .2s, box-shadow .2s, background .2s; }
+        #authSection input:focus { outline: none; background: white; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(124, 58, 237, .12); }
+        #authSection form > button { width: 100%; margin-top: 4px; padding: 13px 16px; border-radius: 10px; font-weight: 700; }
+        .password-field { position: relative; flex: 1 1 100%; }
+        .password-field input { padding-right: 72px; }
+        .password-field button { position: absolute; right: 7px; top: 7px; padding: 6px 8px; border: 0; color: var(--muted); background: transparent; font-size: 12px; }
+        .password-field button:hover { color: var(--blue); }
+        button { cursor: pointer; background: white; color: #172033; }
+        button:hover { border-color: var(--blue); }
+        form button, #loadCustomersButton, #loadAccountsButton, #loadUsersButton { background: var(--blue); color: white; border-color: var(--blue); }
+        .topbar button { background: transparent; color: white; border-color: #c4b5fd; }
+        #appResponse { position: fixed; z-index: 40; top: 92px; right: 28px; display: flex; align-items: flex-start; gap: 12px; width: min(420px, calc(100vw - 32px)); padding: 15px 16px; border: 1px solid #bfdbfe; border-left: 4px solid var(--blue); border-radius: 12px; color: #102a4c; background: rgba(255,255,255,.98); box-shadow: 0 14px 30px rgba(2,12,27,.22); animation: responseEnter .25s ease-out both; }
+        #appResponse[hidden] { display: none; }
+        #appResponse.success { border-left-color: #16a34a; }
+        #appResponse.error { border-left-color: #dc2626; }
+        #appResponseTitle { display: block; margin-bottom: 3px; font-weight: 800; }
+        #appResponseText { color: #475569; font-size: 14px; line-height: 1.4; white-space: pre-line; }
+        #appResponseClose { margin-left: auto; padding: 0 4px; border: 0; color: #64748b; background: transparent; font-size: 20px; line-height: 1; }
+        @keyframes responseEnter { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        #welcomeOverlay { position: fixed; z-index: 35; top: 104px; right: 28px; display: block; pointer-events: none; animation: welcomeFade .35s ease-out both; }
+        #welcomeOverlay[hidden] { display: none; }
+        .welcome-card { position: relative; display: block; width: min(360px, calc(100vw - 32px)); padding: 22px 28px; border: 1px solid rgba(255,255,255,.65); border-radius: 18px; color: white; background: linear-gradient(145deg, rgba(35,16,67,.98), rgba(16,24,57,.98)); box-shadow: 0 18px 45px rgba(0,0,0,.3); animation: welcomeCard .55s cubic-bezier(.2,.8,.2,1) both; }
+        .welcome-close { position: absolute; top: -9px; right: -9px; z-index: 2; width: 28px; height: 28px; padding: 0; border: 1px solid rgba(255,255,255,.5); border-radius: 50%; color: white; background: #7c3aed; font-size: 19px; line-height: 1; pointer-events: auto; }
+        .welcome-close:hover { border-color: white; background: rgba(255,255,255,.25); }
+        .welcome-content { padding-right: 8px; }
+        .welcome-content h2 { margin: 0 0 6px; color: #f8d39a; font-size: 22px; letter-spacing: .03em; line-height: 1.15; text-transform: uppercase; }
+        .welcome-content p { margin: 0; color: #d8c9f7; font-size: 12px; }
+        .welcome-content { flex: 1; padding-right: 12px; }
+        .welcome-mark { display: grid; place-items: center; width: 48px; height: 48px; margin: 0 0 18px; border-radius: 15px; background: linear-gradient(135deg, #c084fc, #7c3aed); font-size: 23px; box-shadow: 0 10px 25px rgba(124,58,237,.4); }
+        .welcome-card h2 { margin: 0 0 10px; color: white; font-size: 30px; letter-spacing: .04em; text-transform: uppercase; }
+        .welcome-card p { margin: 0; color: #cfe0f5; font-size: 15px; line-height: 1.5; }
+        @media (max-width: 620px) { #welcomeOverlay { top: 88px; right: 16px; } .welcome-card { padding: 18px 22px; } .welcome-content h2 { font-size: 17px; } }
+        @keyframes welcomeFade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes welcomeCard { from { opacity: 0; transform: translateY(18px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @media (max-width: 760px) { #appResponse { top: 82px; right: 16px; } }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { text-align: left; border-bottom: 1px solid #e5e8ef; padding: 10px 8px; }
+        th { color: var(--muted); font-size: 13px; }
+        ul { padding-left: 22px; margin-bottom: 0; }
+        li { padding: 7px 0; }
+        .admin-only { display: none; }
+        .bank-legacy { display: none !important; }
+        .user-only { display: none; }
+        .app-content { display: none; }
+        .signed-in .grid > .app-content { display: none !important; }
+        .signed-in .grid > .app-content.section-active { display: block !important; }
+        .status { font-weight: 600; }
+        #logoutButton { margin-top: 18px; }
+        .auth-switch { margin: 14px 0 0; color: var(--muted); text-align: center; }
+        .auth-switch button { border: 0; padding: 0; color: var(--blue); font-weight: 700; background: transparent; }
+        .auth-switch button:hover { text-decoration: underline; }
+        .auth-panel[hidden] { display: none; }
+        .dashboard-section { padding: 24px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; margin-bottom: 22px; }
+        .dashboard-header h2 { margin-bottom: 6px; font-size: 24px; color: #102a4c; }
+        .dashboard-header p { margin: 0; color: var(--muted); }
+        .dashboard-date { color: var(--muted); font-size: 13px; white-space: nowrap; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+        .stat-card { position: relative; overflow: hidden; padding: 18px; border: 1px solid #e5ebf3; border-radius: 14px; background: linear-gradient(135deg, #f8fbff, #eef5ff); }
+        .stat-card:nth-child(2) { background: linear-gradient(135deg, #f7fdfb, #e9f8f1); }
+        .stat-card:nth-child(3) { background: linear-gradient(135deg, #fffaf2, #fff2d8); }
+        .stat-card small { color: var(--muted); font-size: 13px; }
+        .stat-card strong { display: block; margin-top: 8px; color: #102a4c; font-size: 25px; }
+        .stat-icon { position: absolute; right: 16px; top: 16px; font-size: 22px; opacity: .55; }
+        .dashboard-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+        .dashboard-toolbar h3 { margin: 0; font-size: 17px; color: #102a4c; }
+        .dashboard-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+        .dashboard-actions button { background: var(--blue); color: white; border-color: var(--blue); }
+        .dashboard-section .stats-grid { margin-top: 20px; }
+        .dashboard-section .stat-card strong { min-height: 30px; }
+        .dashboard-section .recent-table { overflow-x: auto; }
+        .investment-summary-box { margin-bottom: 22px; padding: 18px; border: 1px solid #e5ddf8; border-radius: 16px; background: linear-gradient(135deg, #fbf8ff, #f3edff); }
+        .investment-summary-box h3 { margin: 0 0 4px; color: #32105f; }
+        .investment-summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 14px 0; }
+        .investment-summary-grid > div { padding: 13px; border-radius: 12px; background: rgba(255,255,255,.75); }
+        .investment-summary-grid small { color: var(--muted); }
+        .investment-summary-grid strong { display: block; margin-top: 5px; color: #32105f; font-size: 20px; }
+        .investment-summary-box .recent-table { overflow-x: auto; }
+        .account-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 18px; }
+        .account-card { position: relative; overflow: hidden; padding: 20px; border-radius: 16px; color: white; background: linear-gradient(135deg, #32105f, #7c3aed); box-shadow: 0 12px 24px rgba(76, 29, 149, .25); }
+        .account-card::after { content: "₺"; position: absolute; right: 20px; top: 10px; color: rgba(255,255,255,.16); font-size: 70px; font-weight: 800; }
+        .account-card small { color: #cfe0f5; }
+        .account-card strong { display: block; margin: 12px 0 16px; font-size: 25px; letter-spacing: .3px; }
+        .account-number { display: block; margin-top: 8px; color: #e2edfb; font-size: 13px; letter-spacing: 1.2px; }
+        .account-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .account-status { padding: 5px 9px; border-radius: 999px; color: #dcfce7; background: rgba(22, 163, 74, .25); font-size: 12px; font-weight: 700; }
+        .account-card button { position: relative; z-index: 1; padding: 7px 10px; border: 1px solid rgba(255,255,255,.45); color: white; background: rgba(255,255,255,.12); font-size: 12px; }
+        .account-card button:hover { background: rgba(255,255,255,.22); border-color: white; }
+        .deposit-box { margin-top: 26px; padding: 18px; border: 1px solid #e5ebf3; border-radius: 14px; background: #f8fbff; }
+        .deposit-box h3 { margin-top: 0; color: #102a4c; }
+        .deposit-box p { color: var(--muted); font-size: 13px; }
+        .deposit-box form { align-items: center; }
+        .deposit-box select { min-width: 240px; flex: 1; }
+        .deposit-box #depositRequestList { margin-top: 14px; }
+        .section-subtitle { margin: -5px 0 15px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+        .transaction-filter-form { align-items: center; margin: 16px 0 8px; padding: 14px; border: 1px solid #e5ebf3; border-radius: 12px; background: #f8fbff; }
+        .transaction-filter-form input { min-width: 230px; }
+        .transaction-filter-form select { min-width: 170px; flex: 0 1 190px; }
+        .transaction-filter-form button { background: var(--blue); color: white; border-color: var(--blue); }
+        .transaction-filter-form button[type="button"] { color: #172033; background: white; border-color: #cbd5e1; }
+        .account-card-meta { display: flex; justify-content: space-between; gap: 12px; margin: 0 0 16px; color: #d7e4f3; font-size: 12px; }
+        .budget-summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+        .budget-summary { padding: 17px; border: 1px solid #e5ebf3; border-radius: 13px; background: #f8fbff; }
+        .budget-summary small { color: var(--muted); }
+        .budget-summary strong { display: block; margin-top: 8px; color: #102a4c; font-size: 22px; }
+        .budget-summary.income { background: #effcf5; }
+        .budget-summary.expense { background: #fff5f5; }
+        .budget-summary.balance { background: #f2efff; }
+        .budget-entry-form { align-items: center; margin: 16px 0; padding: 15px; border: 1px solid #e5ebf3; border-radius: 12px; background: #f8fbff; }
+        .budget-entry-form select, .budget-entry-form input { min-width: 150px; }
+        .budget-entry-form input:last-of-type { flex: 2; }
+        .budget-entry-form button { background: var(--blue); color: white; border-color: var(--blue); }
+        .statement-import-box { margin: 18px 0; padding: 17px; border: 1px dashed #b8c9df; border-radius: 13px; background: #f8fbff; }
+        .statement-import-box h3 { margin-top: 0; color: #102a4c; }
+        .statement-import-box p { color: var(--muted); font-size: 13px; }
+        .statement-import-box input[type="file"] { min-width: 230px; }
+        .statement-import-box button { background: var(--blue); color: white; border-color: var(--blue); }
+        .budget-income { color: #15803d; font-weight: 700; }
+        .budget-expense { color: #b91c1c; font-weight: 700; }
+        .budget-report-section .section-heading-row > input { min-width: 155px; flex: 0 0 auto; }
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+        .report-grid > div { padding: 18px; border: 1px solid #e5ebf3; border-radius: 14px; background: #f8fbff; }
+        .report-grid h3 { margin-top: 0; color: #102a4c; }
+        .limit-box { margin: 18px 0 22px; padding: 18px; border: 1px solid #e5ebf3; border-radius: 14px; background: #f8fbff; }
+        .limit-box h3 { margin-top: 0; color: #102a4c; }
+        .limit-box .budget-entry-form { margin-bottom: 8px; padding: 0; border: 0; background: transparent; }
+        .limit-row { padding: 12px 0; border-top: 1px solid #e5e8ef; }
+        .limit-row-header { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 7px; font-size: 13px; }
+        .limit-row-header strong { color: #102a4c; }
+        .limit-bar { height: 9px; overflow: hidden; border-radius: 999px; background: #e5e7eb; }
+        .limit-bar span { display: block; height: 100%; border-radius: inherit; background: #7c3aed; }
+        .limit-bar span.over { background: #dc2626; }
+        .limit-row small { display: block; margin-top: 6px; color: var(--muted); }
+        .category-row { margin: 14px 0; }
+        .category-row-header { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 6px; font-size: 13px; }
+        .category-row-header strong { color: #102a4c; }
+        .category-bar { height: 9px; overflow: hidden; border-radius: 999px; background: #e5e7eb; }
+        .category-bar span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #a855f7, #7c3aed); }
+        .monthly-report-item { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #e5e8ef; font-size: 13px; }
+        .monthly-report-item:last-child { border-bottom: 0; }
+        .expense-chart-box { margin-top: 22px; padding: 18px; border: 1px solid #e5ebf3; border-radius: 14px; background: #f8fbff; }
+        .expense-chart-box h3 { margin-top: 0; color: #102a4c; }
+        .expense-chart-layout { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+        #expensePieChart { width: 240px; height: 240px; max-width: 100%; }
+        .expense-chart-legend { display: grid; gap: 9px; min-width: 220px; }
+        .expense-legend-item { display: flex; align-items: center; justify-content: space-between; gap: 18px; font-size: 13px; }
+        .expense-legend-label { display: flex; align-items: center; gap: 8px; }
+        .expense-legend-dot { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; }
+        @media (max-width: 760px) { .report-grid { grid-template-columns: 1fr; } }
+        #transactionSearch { max-width: 270px; min-width: 190px; padding: 10px 12px; border-radius: 9px; }
+        .status-pill { display: inline-block; padding: 4px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #e2e8f0; color: #475569; }
+        .status-pill.completed { background: #dcfce7; color: #166534; }
+        .status-pill.approved { background: #dbeafe; color: #1d4ed8; }
+        .status-pill.failed, .status-pill.cancelled { background: #fee2e2; color: #b91c1c; }
+        .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .profile-card { padding: 18px; border: 1px solid #e5ebf3; border-radius: 13px; background: #f8fafc; }
+        .profile-card h3 { margin-top: 0; color: #102a4c; }
+        .profile-row { display: flex; justify-content: space-between; gap: 14px; padding: 11px 0; border-bottom: 1px solid #e5eaf1; }
+        .profile-row:last-child { border-bottom: 0; }
+        .profile-row span:first-child { color: var(--muted); }
+        .profile-row span:last-child { font-weight: 600; text-align: right; }
+        .profile-edit-form { margin-top: 14px; padding-top: 14px; border-top: 1px solid #e5eaf1; }
+        .profile-edit-form input { width: 100%; min-width: 0; }
+        .admin-stats { padding: 22px; }
+        .admin-stats h2 { color: #102a4c; }
+        .admin-stats-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+        .admin-stat { padding: 15px; border-radius: 12px; background: #f1f6ff; border: 1px solid #dce8f8; }
+        .admin-stat small { display: block; color: var(--muted); }
+        .admin-stat strong { display: block; margin-top: 7px; color: #4c1d95; font-size: 24px; }
+        .approval-list { margin-top: 12px; }
+        .approval-empty { color: var(--muted); }
+        .section-heading-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+        .section-heading-row h2 { margin-bottom: 0; }
+        .import-form { margin: 16px 0; padding: 14px; border: 1px dashed #b8c9df; border-radius: 12px; background: #f8fbff; }
+        .import-form input[type="file"] { min-width: 240px; }
+        .customer-search-form { margin: 16px 0 4px; }
+        .customer-search-form input { min-width: 260px; }
+        .pagination { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+        .pagination button { min-width: 36px; padding: 8px 10px; border-radius: 8px; }
+        .pagination button.active { color: white; background: var(--blue); border-color: var(--blue); }
+        .scroll-reveal { opacity: 0; transform: translateY(28px); transition: opacity .65s ease, transform .65s ease; }
+        .scroll-reveal.is-visible { opacity: 1; transform: translateY(0); }
+        .admin-stat { transition: transform .25s, box-shadow .25s; }
+        .admin-stat:hover { transform: translateY(-4px); box-shadow: 0 10px 22px rgba(18, 52, 91, .1); }
+        .balance-value { display: inline-block; min-width: 72px; font-variant-numeric: tabular-nums; }
+        @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } section.wide { grid-column: auto; } .topbar { padding: 14px 20px; } #authSection { margin: 34px 12px 0; padding: 28px 22px 24px; } .stats-grid, .profile-grid, .budget-summary-grid { grid-template-columns: 1fr; } .dashboard-header, .dashboard-toolbar { flex-direction: column; align-items: stretch; } #transactionSearch { max-width: none; width: 100%; } }
+        /* Modern panel dokunuşları */
+        .signed-in main { animation: panelEnter .45s ease-out both; }
+        .signed-in .grid > .app-content.section-active { animation: sectionEnter .35s ease-out both; }
+        .topbar::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: linear-gradient(90deg, transparent, #a855f7 35%, #c084fc 65%, transparent); opacity: .75; }
+        .topbar { position: sticky; }
+        .brand { background: linear-gradient(90deg, #fff, #e9d5ff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .sidebar { box-shadow: 12px 0 32px rgba(2, 12, 27, .12); }
+        .sidebar button { position: relative; overflow: hidden; }
+        .sidebar button.active::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 4px 4px 0; background: #d8b4fe; box-shadow: 0 0 12px #a855f7; }
+        section { transition: box-shadow .25s, transform .25s; }
+        .dashboard-section, .budget-section, .budget-report-section { border-color: rgba(216, 180, 254, .28); }
+        .stat-card, .budget-summary, .investment-summary-grid > div { transition: transform .22s, box-shadow .22s, border-color .22s; }
+        .stat-card:hover, .budget-summary:hover, .investment-summary-grid > div:hover { transform: translateY(-3px); border-color: rgba(124, 58, 237, .32); box-shadow: 0 10px 24px rgba(76, 29, 149, .12); }
+        .dashboard-actions button, .budget-entry-form button, .statement-import-box button { box-shadow: 0 6px 14px rgba(124, 58, 237, .2); transition: transform .2s, box-shadow .2s, filter .2s; }
+        .dashboard-actions button:hover, .budget-entry-form button:hover, .statement-import-box button:hover { transform: translateY(-2px); box-shadow: 0 9px 20px rgba(124, 58, 237, .3); filter: brightness(1.05); }
+        table tbody tr { transition: background .18s; }
+        table tbody tr:hover { background: #faf7ff; }
+        th { letter-spacing: .02em; text-transform: none; }
+        input:focus, select:focus { outline: none; border-color: #8b5cf6; box-shadow: 0 0 0 3px rgba(139, 92, 246, .14); }
+        .section-heading-row { align-items: center; }
+        .dashboard-section { position: relative; overflow: hidden; background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(247,243,255,.96)); }
+        .dashboard-section::before { content: ""; position: absolute; width: 280px; height: 280px; right: -110px; top: -130px; border-radius: 50%; background: radial-gradient(circle, rgba(168,85,247,.18), transparent 68%); pointer-events: none; }
+        .dashboard-header, .investment-summary-box, .stats-grid, .dashboard-toolbar, .recent-table, .dashboard-actions { position: relative; z-index: 1; }
+        .dashboard-header h2 { font-size: 27px; letter-spacing: -.7px; }
+        .dashboard-header h2::after { content: ""; display: block; width: 42px; height: 4px; margin-top: 10px; border-radius: 999px; background: linear-gradient(90deg, #7c3aed, #c084fc); }
+        .dashboard-date { padding: 8px 12px; border: 1px solid #e6dafa; border-radius: 999px; color: #6d28d9; background: #faf7ff; font-weight: 700; }
+        .stats-grid { gap: 16px; }
+        .stat-card { min-height: 112px; border-color: rgba(148,163,184,.24); box-shadow: 0 6px 18px rgba(30,41,59,.05); }
+        .stat-card::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: linear-gradient(90deg, rgba(124,58,237,.15), rgba(124,58,237,.7)); opacity: .8; }
+        .stat-card:nth-child(2)::after { background: linear-gradient(90deg, rgba(22,163,74,.12), rgba(22,163,74,.65)); }
+        .stat-card:nth-child(3)::after { background: linear-gradient(90deg, rgba(245,158,11,.12), rgba(245,158,11,.68)); }
+        .stat-card:nth-child(4)::after { background: linear-gradient(90deg, rgba(14,165,233,.12), rgba(14,165,233,.65)); }
+        .stat-card:nth-child(5)::after { background: linear-gradient(90deg, rgba(220,38,38,.12), rgba(220,38,38,.65)); }
+        .stat-icon { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; color: #7c3aed; background: rgba(255,255,255,.72); box-shadow: 0 4px 10px rgba(76,29,149,.08); }
+        .investment-summary-box { border-color: #e5d5fb; box-shadow: 0 8px 22px rgba(76,29,149,.07); }
+        .investment-summary-grid strong { font-variant-numeric: tabular-nums; }
+        .recent-table { border: 1px solid #edf0f6; border-radius: 14px; background: rgba(255,255,255,.65); overflow: hidden; }
+        .recent-table table { margin-top: 0; }
+        .recent-table th { background: #f7f4ff; color: #6d28d9; }
+        .dashboard-actions { padding-top: 4px; }
+        .dashboard-actions button { min-height: 42px; padding: 10px 16px; border-radius: 10px; font-weight: 700; }
+        .budget-section, .budget-report-section, #personalRulesSection, #profileSection { background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(249,247,255,.96)); }
+        .budget-summary strong, .stat-card strong { font-variant-numeric: tabular-nums; letter-spacing: -.3px; }
+        .budget-entry-form, .transaction-filter-form { box-shadow: inset 0 1px 0 rgba(255,255,255,.8); }
+        .section-active > h2, .section-active .section-heading-row h2, .section-active .dashboard-header h2, .section-active .dashboard-header p { animation: titleEnter .5s cubic-bezier(.2,.8,.2,1) both; }
+        .section-active .dashboard-header p { animation-delay: .08s; }
+        .section-active .stats-grid .stat-card { animation: cardEnter .5s cubic-bezier(.2,.8,.2,1) both; }
+        .section-active .stats-grid .stat-card:nth-child(2) { animation-delay: .06s; }
+        .section-active .stats-grid .stat-card:nth-child(3) { animation-delay: .12s; }
+        .section-active .stats-grid .stat-card:nth-child(4) { animation-delay: .18s; }
+        .section-active .stats-grid .stat-card:nth-child(5) { animation-delay: .24s; }
+        .section-active .investment-summary-box { animation: cardEnter .55s .04s cubic-bezier(.2,.8,.2,1) both; }
+        .section-active .dashboard-toolbar, .section-active .recent-table, .section-active .dashboard-actions { animation: cardEnter .55s .16s cubic-bezier(.2,.8,.2,1) both; }
+        @media (max-width: 760px) { .dashboard-header h2 { font-size: 23px; } .stat-card { min-height: 96px; } .dashboard-date { align-self: flex-start; } }
+        @keyframes panelEnter { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes sectionEnter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes titleEnter { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes cardEnter { from { opacity: 0; transform: translateY(12px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        #authSection details { margin-top: 20px; padding-top: 18px; border-top: 1px solid #e7edf5; }
+        @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } section.wide { grid-column: auto; } .topbar { padding: 14px 20px; } #authSection { margin: 34px 12px 0; padding: 28px 22px 24px; } }
+    </style>
 </head>
 <body>
-    <h1>Müşteri Yönetimi</h1>
+    <header class="topbar">
+        <div><div class="brand">Finansal Bütçe ve Harcama Yönetim Sistemi</div><small>Gelir, gider ve bütçe yönetimi</small></div>
+        <div class="topbar-actions"><p id="session">Oturum açılmadı.</p><button id="profileTopButton">Profilim</button><button id="logoutTopButton">Giriş Yap</button></div>
+    </header>
+    <div id="appResponse" hidden role="status" aria-live="polite"><div><span id="appResponseTitle">Bilgi</span><span id="appResponseText"></span></div><button id="appResponseClose" type="button" aria-label="Mesajı kapat">×</button></div>
+    <div id="welcomeOverlay" hidden><div class="welcome-card"><button id="welcomeClose" class="welcome-close" type="button" aria-label="Karşılama mesajını kapat">×</button><div class="welcome-content"><h2 id="welcomeTitle">HOŞ GELDİN!</h2><p id="welcomeText">Güvenli hesabınıza yönlendiriliyorsunuz.</p></div></div></div>
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-label">Çalışma alanı</div>
+        <button data-target="dashboardSection" class="user-only"><span class="sidebar-icon">⌂</span>Ana sayfa</button>
+        <button data-target="adminDashboardSection" class="admin-only"><span class="sidebar-icon">⌂</span>Ana sayfa</button>
+        <button data-target="profileSection"><span class="sidebar-icon">◉</span>Profilim</button>
+        <button data-target="budgetSection" class="user-only"><span class="sidebar-icon">₺</span>Bütçem</button>
+        <button data-target="personalRulesSection" class="user-only"><span class="sidebar-icon">⌕</span>Kategori kuralları</button>
+        <button data-target="budgetReportSection" class="user-only"><span class="sidebar-icon">▥</span>Raporlarım</button>
+        <button data-target="accountSection" class="bank-legacy"><span class="sidebar-icon">▣</span><span class="account-nav-label">Hesaplarım</span></button>
+        <button data-target="transferSection" class="user-only bank-legacy"><span class="sidebar-icon">↗</span>Para transferi</button>
+        <button data-target="customerSection" class="admin-only"><span class="sidebar-icon">♙</span>Müşteriler</button>
+        <button data-target="approvalSection" class="admin-only"><span class="sidebar-icon">✓</span>Onay bekleyenler</button>
+        <button data-target="depositRequestSection" class="admin-only bank-legacy"><span class="sidebar-icon">₺</span>Para yatırma talepleri</button>
+        <button data-target="userSection" class="admin-only"><span class="sidebar-icon">⚙</span>Kullanıcı yönetimi</button>
+        <button data-target="categorySection" class="admin-only"><span class="sidebar-icon">▦</span>Kategori yönetimi</button>
+        <button data-target="auditSection" class="admin-only"><span class="sidebar-icon">▤</span>İşlem geçmişi</button>
+        <button data-target="securitySection" class="admin-only"><span class="sidebar-icon">⚿</span>Güvenlik</button>
+    </aside>
+    <main>
+        <div class="intro app-content"><h1 id="introTitle">Kontrol Paneli</h1><p id="introDescription">Gelirlerini, giderlerini ve bütçeni tek ekrandan yönet.</p></div>
+        <div class="grid">
 
-    <h2>Kayıt Ol</h2>
+    <section id="dashboardSection" class="wide user-only app-content dashboard-section">
+        <div class="dashboard-header">
+            <div><h2>Hoş geldin, <span id="dashboardUserName">-</span></h2><p>Gelirlerini, giderlerini ve bütçeni buradan yönetebilirsin.</p></div>
+            <span id="dashboardDate" class="dashboard-date"></span>
+        </div>
+        <div class="investment-summary-box">
+            <div class="section-heading-row"><div><h3>Varlıklarım ve yatırımlarım</h3></div><button type="button" id="goPersonalRulesButton">Kategori kuralı ekle</button></div>
+            <div class="investment-summary-grid">
+                <div><small>Yatırıma giden</small><strong id="investmentExpense">₺0,00</strong></div>
+                <div><small>Yatırımdan gelen</small><strong id="investmentIncome">₺0,00</strong></div>
+                <div><small>Net yatırım durumu</small><strong id="investmentNet">₺0,00</strong></div>
+            </div>
+            <div id="investmentRecentList" class="recent-table"><p>Henüz yatırım işlemi bulunmuyor.</p></div>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><small>Toplam varlık</small><strong id="totalBalance">₺0,00</strong><span class="stat-icon">₺</span></div>
+            <div class="stat-card"><small>Banka bakiyesi</small><strong id="dashboardBankBalance">₺0,00</strong><span class="stat-icon">▣</span></div>
+            <div class="stat-card"><small>Eldeki nakit</small><strong id="dashboardCashBalance">₺0,00</strong><span class="stat-icon">▤</span></div>
+            <div class="stat-card"><small>Toplam gelir</small><strong id="dashboardIncome">₺0,00</strong><span class="stat-icon">↗</span></div>
+            <div class="stat-card"><small>Toplam gider</small><strong id="dashboardExpense">₺0,00</strong><span class="stat-icon">↘</span></div>
+        </div>
+        <div class="dashboard-toolbar"><h3>Son hesap hareketleri</h3><button type="button" id="refreshDashboardButton">Yenile</button></div>
+        <div id="recentTransactions" class="recent-table">Henüz işlem bulunmuyor.</div>
+        <div class="dashboard-actions">
+            <button type="button" id="goBudgetButton">Bütçemi Gör</button>
+            <button type="button" id="goBudgetEntryButton">Gelir/Gider Ekle</button>
+            <button type="button" id="goProfileButton">Profilimi Aç</button>
+        </div>
+    </section>
 
-    <form id="registerForm">
-        <input id="registerUserName" placeholder="Kullanıcı adı" required>
-        <input id="registerPassword" type="password" placeholder="Şifre" required>
-        <button type="submit">Kayıt Ol</button>
-    </form>
+    <section id="adminDashboardSection" class="wide admin-only app-content admin-dashboard-section">
+        <div class="dashboard-header">
+            <div><h2>Yönetim özeti</h2></div>
+            <span id="adminDashboardDate" class="dashboard-date"></span>
+        </div>
+        <div class="admin-stats-grid">
+            <div class="admin-stat"><small>Toplam kullanıcı</small><strong id="adminTotalUsers">0</strong></div>
+            <div class="admin-stat"><small>Onay bekleyen</small><strong id="adminPendingUsers">0</strong></div>
+            <div class="admin-stat"><small>Toplam müşteri</small><strong id="adminTotalCustomers">0</strong></div>
+            <div class="admin-stat"><small>İşlem kaydı</small><strong id="adminTotalAuditLogs">0</strong></div>
+            <div class="admin-stat"><small>Aktif kullanıcı</small><strong id="adminApprovedUsers">0</strong></div>
+        </div>
+        <div class="dashboard-toolbar"><h3>Son yönetim işlemleri</h3><button type="button" id="refreshAdminDashboardButton">Yenile</button></div>
+        <div id="adminRecentActivity"><p>Henüz işlem kaydı bulunmuyor.</p></div>
+    </section>
 
-    <h2>Giriş Yap</h2>
+    <section id="budgetSection" class="wide user-only app-content budget-section">
+        <div class="section-heading-row">
+            <div><h2>Bütçem</h2></div>
+            <button id="refreshBudgetButton" type="button">Yenile</button>
+        </div>
+        <div class="budget-summary-grid">
+            <div class="budget-summary income"><small>Toplam gelir</small><strong id="budgetTotalIncome">₺0,00</strong></div>
+            <div class="budget-summary expense"><small>Toplam gider</small><strong id="budgetTotalExpense">₺0,00</strong></div>
+            <div class="budget-summary balance"><small>Banka bakiyesi</small><strong id="budgetAvailableBalance">₺0,00</strong></div>
+            <div class="budget-summary balance"><small>Eldeki nakit</small><strong id="budgetCashBalance">₺0,00</strong></div>
+            <div class="budget-summary balance"><small>Toplam varlık</small><strong id="budgetTotalAssets">₺0,00</strong></div>
+        </div>
+        <form id="budgetEntryForm" class="budget-entry-form">
+            <input id="budgetEntryId" type="hidden">
+            <select id="budgetEntryType" required>
+                <option value="Income">Gelir</option>
+                <option value="Expense">Gider</option>
+            </select>
+            <select id="budgetCategory" required>
+                <option value="">Kategori seçin</option>
+                <option>Maaş</option><option>Burs</option><option>Ek gelir</option>
+                <option>Kira</option><option>Fatura</option><option>Market</option>
+                <option>Ulaşım</option><option>Eğitim</option><option>Sağlık</option><option>Diğer</option>
+            </select>
+            <input id="budgetAmount" type="number" min="0.01" step="0.01" placeholder="Tutar (TL)" required>
+            <input id="budgetEntryDate" type="date" required>
+            <input id="budgetDescription" placeholder="Açıklama (isteğe bağlı)">
+            <button id="budgetEntrySubmitButton" type="submit">Kayıt Ekle</button>
+            <button id="budgetEntryCancelButton" type="button" hidden>Vazgeç</button>
+        </form>
+        <div class="statement-import-box">
+            <h3>Banka ekstresi içe aktar</h3>
+            <form id="statementImportForm">
+                <input id="statementExcelFile" type="file" accept=".xlsx,.pdf" required>
+                <button type="submit">Ekstreyi Yükle</button>
+            </form>
+            <div id="statementPreview" hidden>
+                <h4>Ekstre önizlemesi</h4>
+                <div id="statementPreviewList"></div>
+                <button id="confirmStatementButton" type="button">İşlemleri Kaydet</button>
+                <button id="cancelStatementButton" type="button">İçe Aktarmayı İptal Et</button>
+            </div>
+        </div>
+        <div class="statement-import-box receivables-box">
+            <h3>Cari hareketler</h3>
+            <h4>Bana ödenecekler</h4>
+            <div id="receivableList"><p>Henüz alacak kaydı bulunmuyor.</p></div>
+            <h4>Borçlarım</h4>
+            <div id="payableList"><p>Henüz borç kaydı bulunmuyor.</p></div>
+        </div>
+        <div id="budgetEntryList"><p>Henüz gelir veya gider kaydı bulunmuyor.</p></div>
+    </section>
 
-    <form id="loginForm">
-        <input id="loginUserName" placeholder="Kullanıcı adı" required>
-        <input id="loginPassword" type="password" placeholder="Şifre" required>
-        <button type="submit">Giriş Yap</button>
-    </form>
+    <section id="personalRulesSection" class="wide user-only app-content">
+        <div class="section-heading-row"><div><h2>Kategori kuralları</h2></div><button id="refreshPersonalRulesButton" type="button">Yenile</button></div>
+        <form id="personalRuleForm" class="budget-entry-form">
+            <input id="personalRuleKeyword" placeholder="Anahtar kelime (altın, döviz, kuyumcu)" required>
+            <select id="personalRuleType" required><option value="Expense">Gider</option><option value="Income">Gelir</option></select>
+            <select id="personalRuleCategory" required><option value="">Kategori seçin</option></select>
+            <button type="submit">Kuralı Kaydet</button>
+        </form>
+        <div id="personalRuleList"><p>Henüz kişisel kategori kuralı bulunmuyor.</p></div>
+    </section>
 
-    <hr>
+    <section id="budgetReportSection" class="wide user-only app-content budget-report-section">
+        <div class="section-heading-row">
+            <div><h2>Bütçe raporlarım</h2></div>
+            <input id="reportMonth" type="month" aria-label="Rapor ayı">
+        </div>
+        <div class="budget-summary-grid">
+            <div class="budget-summary income"><small>Aylık gelir</small><strong id="reportIncome">₺0,00</strong></div>
+            <div class="budget-summary expense"><small>Aylık gider</small><strong id="reportExpense">₺0,00</strong></div>
+            <div class="budget-summary balance"><small>Aylık fark</small><strong id="reportBalance">₺0,00</strong></div>
+        </div>
+        <div class="limit-box">
+            <h3>Aylık kategori bütçesi belirle</h3>
+            <form id="budgetLimitForm" class="budget-entry-form">
+                <select id="budgetLimitCategory" required>
+                    <option value="">Kategori seçin</option>
+                    <option>Kira</option><option>Fatura</option><option>Market</option>
+                    <option>Ulaşım</option><option>Eğitim</option><option>Sağlık</option><option>Diğer</option>
+                </select>
+                <input id="budgetLimitAmount" type="number" min="0.01" step="0.01" placeholder="Limit (TL)" required>
+                <button type="submit">Limit Kaydet</button>
+            </form>
+            <div id="budgetLimitList"><p>Bu ay için limit belirlenmedi.</p></div>
+        </div>
+        <div class="report-grid">
+            <div><h3>Kategori bazlı giderler</h3><div id="categoryReport"><p>Bu ay için gider kaydı bulunmuyor.</p></div></div>
+            <div><h3>Aylık kayıtlar</h3><div id="monthlyReportList"><p>Bu ay için kayıt bulunmuyor.</p></div></div>
+        </div>
+        <div class="expense-chart-box">
+            <h3>Gider dağılımı</h3>
+            <div class="expense-chart-layout">
+                <canvas id="expensePieChart" width="240" height="240"></canvas>
+                <div id="expenseChartLegend" class="expense-chart-legend"><p>Bu ay için gider kaydı bulunmuyor.</p></div>
+            </div>
+        </div>
+    </section>
 
-    <h2>Müşteri Ekle / Güncelle</h2>
+    <section id="profileSection" class="wide app-content">
+        <h2>Profilim</h2>
+        <div class="profile-grid">
+            <div class="profile-card">
+                <h3>Hesap bilgileri</h3>
+                <div class="profile-row"><span>Kullanıcı adı</span><span id="profileUserName">-</span></div>
+                <div class="profile-row"><span>E-posta</span><span id="profileEmail">-</span></div>
+                <div class="profile-row"><span>Cep telefonu</span><span id="profilePhone">-</span></div>
+                <div class="profile-row"><span>Rol</span><span id="profileRole">-</span></div>
+                <form id="profileInfoForm" class="profile-edit-form">
+                    <input id="profileEmailInput" type="email" placeholder="E-posta adresi" required>
+                    <input id="profilePhoneInput" type="tel" placeholder="Cep telefonu" required>
+                    <button>Bilgileri Güncelle</button>
+                </form>
+            </div>
+            <div class="profile-card">
+                <h3>Şifre değiştir</h3>
+                <form id="changePasswordForm">
+                    <input id="currentPassword" type="password" placeholder="Mevcut şifre" required>
+                    <input id="newPasswordChange" type="password" placeholder="Yeni şifre" minlength="6" required>
+                    <input id="newPasswordAgain" type="password" placeholder="Yeni şifre tekrar" minlength="6" required>
+                    <button>Şifreyi Güncelle</button>
+                </form>
+            </div>
+        </div>
+    </section>
 
-    <form id="musteriForm">
-        <input type="hidden" id="musteriId">
+    <section id="approvalSection" class="wide admin-only app-content">
+        <div class="section-heading-row"><h2>Onay Bekleyen Kullanıcılar</h2><button id="approveAllUsersButton">Tümünü Onayla</button></div>
+        <div id="pendingUsersList" class="approval-list"><p class="approval-empty">Onay bekleyen kullanıcı bulunmuyor.</p></div>
+    </section>
 
-        <input id="fullName" placeholder="Ad Soyad" required>
-        <input id="email" type="email" placeholder="E-posta" required>
-        <input id="phone" placeholder="Telefon" required>
+    <section id="authSection" class="wide">
+        <div class="auth-heading">
+            <div class="auth-logo">₺</div>
+            <h2>Hesabınıza giriş yapın</h2>
+            <p>Gelirlerinizi, giderlerinizi ve bütçenizi güvenli ve kolay bir şekilde yönetin.</p>
+        </div>
+        <p id="loginChoiceTitle" class="login-mode-title" style="text-align:center; margin-bottom:14px;">Nasıl giriş yapmak istersiniz?</p>
+        <div id="loginChoicePanel" class="login-choice">
+            <button type="button" id="chooseUserLogin"><span class="login-choice-icon">♙</span><span class="choice-title">Kullanıcı Girişi</span><span class="choice-desc">Gelir, gider ve bütçe bilgilerinize erişin.</span></button>
+            <button type="button" id="chooseAdminLogin"><span class="login-choice-icon">♜</span><span class="choice-title">Yönetici Girişi</span><span class="choice-desc">Kullanıcı ve sistem yönetim paneline erişin.</span></button>
+        </div>
+        <p class="secure-note"><span>● Güvenli bağlantı</span> · Bilgileriniz korunmaktadır.</p>
+        <form id="loginForm" hidden>
+            <h3 id="loginModeTitle" class="login-mode-title">Giriş</h3>
+            <input id="loginUserName" placeholder="Kullanıcı adı" autocomplete="username" aria-label="Kullanıcı adı" required>
+            <div class="password-field">
+                <input id="loginPassword" type="password" placeholder="Şifre" autocomplete="current-password" aria-label="Şifre" required>
+                <button type="button" id="toggleLoginPassword">Göster</button>
+            </div>
+            <button>Giriş Yap</button>
+            <button type="button" id="backToLoginChoice" class="back-to-choice">← Giriş türünü değiştir</button>
+        </form>
+        <p class="auth-switch">Hesabın yok mu? <button type="button" id="showRegisterButton">Kayıt Ol</button></p>
+        <details id="forgotPasswordSection" hidden>
+            <summary>Şifremi unuttum</summary>
+            <form id="forgotForm">
+                <input id="forgotUserName" placeholder="Kullanıcı adı" required>
+                <button>Şifre sıfırlama tokenı oluştur</button>
+            </form>
+            <small>Geliştirme ortamında token aşağıda gösterilir. Gerçek sistemde e-posta ile gönderilmelidir.</small>
+            <form id="resetForm">
+                <input id="resetUserName" placeholder="Kullanıcı adı" required>
+                <input id="resetToken" placeholder="Reset token" required>
+                <input id="newPassword" type="password" placeholder="Yeni şifre" required>
+                <button>Şifreyi Yenile</button>
+            </form>
+        </details>
+        <div id="registerPanel" class="auth-panel" hidden>
+            <h3>Yeni kullanıcı</h3>
+            <form id="registerForm">
+                <input id="registerUserName" placeholder="Kullanıcı adı" required>
+                <input id="registerEmail" type="email" placeholder="E-posta adresi" autocomplete="email" required>
+                <input id="registerPhone" type="tel" placeholder="Cep telefonu" autocomplete="tel" required>
+                <input id="registerPassword" type="password" placeholder="Şifre" autocomplete="new-password" required>
+                <button>Kayıt Ol</button>
+            </form>
+            <p class="auth-switch">Zaten hesabın var mı? <button type="button" id="showLoginButton">Giriş Yap</button></p>
+        </div>
+    </section>
 
-        <button type="submit" id="kaydetButton">Müşteri Ekle</button>
+    <section id="customerSection" class="wide admin-only app-content">
+        <h2>Müşteri Yönetimi</h2>
+        <form id="customerForm" class="admin-only">
+            <input type="hidden" id="customerId">
+            <input id="fullName" placeholder="Ad Soyad" required>
+            <input id="email" type="email" placeholder="E-posta" required>
+            <input id="phone" placeholder="Telefon" required>
+            <button id="customerSaveButton">Müşteri Ekle</button>
+            <button type="button" id="customerCancelButton" hidden>İptal</button>
+        </form>
+        <form id="customerImportForm" class="admin-only import-form">
+            <input id="customerExcelFile" type="file" accept=".xlsx" required>
+            <button type="submit">Excel’den Müşteri Aktar</button>
+        </form>
+        <button id="loadCustomersButton">Müşterileri Getir</button>
+        <form id="customerSearchForm" class="customer-search-form">
+            <input id="customerSearchInput" placeholder="Ad, e-posta veya telefon ile ara">
+            <button type="submit">Ara</button>
+            <button type="button" id="clearCustomerSearchButton">Temizle</button>
+        </form>
+        <ul id="customerList"></ul>
+    </section>
 
-        <button type="button" id="iptalButton"
-                onclick="formuTemizle()" hidden>
-            İptal
-        </button>
-    </form>
+    <section id="accountSection" class="app-content bank-legacy">
+        <h2>Hesaplarım</h2>
+        <button id="loadAccountsButton">Hesapları Yenile</button>
+        <div id="accountList"></div>
+        <form id="accountForm" class="admin-only">
+            <h3>Yeni hesap oluştur</h3>
+            <input id="accountCustomerId" type="number" placeholder="Müşteri ID" required>
+            <button>Hesap Oluştur</button>
+        </form>
+        <div class="user-only deposit-box">
+            <h3>Para yatırma talebi</h3>
+            <p>Talebin admin tarafından onaylandıktan sonra hesabına yansır.</p>
+            <form id="depositForm">
+                <select id="depositAccountId" required><option value="">Hesap seçin</option></select>
+                <input id="depositAmount" type="number" min="0.01" step="0.01" placeholder="Tutar (TL)" required>
+                <button>Talep Oluştur</button>
+            </form>
+            <div id="depositRequestList"></div>
+        </div>
+    </section>
 
-    <button onclick="musterileriGetir()">Müşterileri Getir</button>
+    <section id="userSection" class="admin-only app-content">
+        <h2>Kullanıcı–Müşteri Bağlantısı</h2>
+        <button id="loadUsersButton">Kullanıcıları Getir</button>
+        <form id="userSearchForm" class="customer-search-form">
+            <input id="userSearchInput" placeholder="Kullanıcı, e-posta veya telefon ile ara">
+            <button type="submit">Ara</button>
+            <button type="button" id="clearUserSearchButton">Temizle</button>
+        </form>
+        <div id="userList"></div>
+    </section>
 
-    <ul id="musteriListesi"></ul>
+    <section id="categorySection" class="wide admin-only app-content">
+        <h2>Kategori yönetimi</h2>
+        <form id="categoryForm" class="budget-entry-form">
+            <input id="categoryId" type="hidden">
+            <input id="categoryName" placeholder="Kategori adı" required>
+            <select id="categoryType" required><option value="Income">Gelir</option><option value="Expense">Gider</option></select>
+            <button id="categorySubmitButton" type="submit">Kategori Ekle</button>
+            <button id="categoryCancelButton" type="button" hidden>Vazgeç</button>
+        </form>
+        <div id="categoryList"><p>Kategori bulunmuyor.</p></div>
+    </section>
+
+    <section id="auditSection" class="wide admin-only app-content">
+        <div class="section-heading-row"><h2>İşlem Geçmişi</h2><div><button id="exportAuditButton" type="button">Excel'e Aktar</button> <button id="loadAuditLogsButton">Yenile</button></div></div>
+        <form id="auditFilterForm" class="transaction-filter-form">
+            <input id="auditSearchInput" placeholder="Kullanıcı, işlem veya açıklama ara">
+            <select id="auditActionFilter"><option value="">Tüm işlem türleri</option></select>
+            <input id="auditFromDate" type="date" aria-label="Başlangıç tarihi">
+            <input id="auditToDate" type="date" aria-label="Bitiş tarihi">
+            <button type="submit">Filtrele</button>
+            <button type="button" id="clearAuditFilterButton">Temizle</button>
+        </form>
+        <div id="auditLogList"><p>Henüz işlem kaydı bulunmuyor.</p></div>
+    </section>
+
+    <section id="securitySection" class="wide admin-only app-content">
+        <div class="section-heading-row"><h2>Güvenlik görünümü</h2><button id="refreshSecurityButton" type="button">Yenile</button></div>
+        <div id="securityList"><p>Güvenlik bilgisi bulunmuyor.</p></div>
+    </section>
+
+    <section id="depositRequestSection" class="wide admin-only app-content bank-legacy">
+        <div class="section-heading-row"><h2>Para Yatırma Talepleri</h2><button id="loadDepositRequestsButton">Yenile</button></div>
+        <div id="adminDepositRequestList"><p>Bekleyen para yatırma talebi bulunmuyor.</p></div>
+    </section>
+
+    <section id="transferSection" class="user-only app-content bank-legacy">
+        <h2>Para Transferi</h2>
+        <form id="transferForm">
+            <input id="senderAccountId" type="number" placeholder="Gönderen hesap ID" required>
+            <input id="receiverAccountId" type="number" placeholder="Alıcı hesap ID" required>
+            <input id="transferAmount" type="number" min="0.01" step="0.01" placeholder="Tutar" required>
+            <button>Transfer Oluştur</button>
+        </form>
+    </section>
+
+        </div>
+    </main>
 
     <script>
-        async function registerOl() {
-            const user = {
-                userName: document.getElementById("registerUserName").value,
-                password: document.getElementById("registerPassword").value
+        const $ = id => document.getElementById(id);
+
+        let responseTimer;
+        let activeSectionId = "dashboardSection";
+        function showAppResponse(message) {
+            const text = String(message || "");
+            const isError = /başarısız|hatalı|hata|zorunlu|bulunamadı|yetkin|reddedildi|geçersiz|yetersiz|seçmelisin|seçin|yazmalısın/i.test(text);
+            const response = $("appResponse");
+            response.className = isError ? "error" : "success";
+            $("appResponseTitle").textContent = isError ? "İşlem gerçekleştirilemedi" : "İşlem sonucu";
+            $("appResponseText").textContent = text;
+            response.hidden = false;
+            clearTimeout(responseTimer);
+            responseTimer = setTimeout(() => { response.hidden = true; }, 6000);
+        }
+        function alert(message) { showAppResponse(message); }
+        let welcomeTimer;
+        function showWelcome(userName, admin) {
+            $("welcomeTitle").textContent = `HOŞ GELDİN, ${(userName || "KULLANICI").toUpperCase()}!`;
+            $("welcomeText").textContent = admin ? "Yönetim paneliniz hazırlanıyor." : "Hesabınız açılıyor.";
+            $("welcomeOverlay").hidden = false;
+            clearTimeout(welcomeTimer);
+            welcomeTimer = setTimeout(() => { $("welcomeOverlay").hidden = true; }, 20000);
+        }
+
+        function token() { return localStorage.getItem("token"); }
+        let transactionData = [];
+        let budgetEntryData = [];
+        let budgetPage = 1;
+        const budgetPageSize = 10;
+        let budgetLimitData = [];
+        let adminUserData = [];
+        let budgetCategoryData = [];
+        let adminAuditData = [];
+        let merchantRuleData = [];
+        let merchantRulePage = 1;
+        const merchantRulePageSize = 10;
+        let pendingStatementRows = [];
+        let transactionReviewData = [];
+        let receivableData = [];
+        let customerData = [];
+        let filteredCustomerData = [];
+        let customerPage = 1;
+        const customerPageSize = 20;
+        let selectedLoginType = null;
+        function authHeaders(json = false) {
+            return {
+                ...(json ? { "Content-Type": "application/json" } : {}),
+                ...(token() ? { "Authorization": `Bearer ${token()}` } : {})
             };
-
-            const cevap = await fetch("/api/v1/auth/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(user)
+        }
+        function decodeToken() {
+            if (!token()) return null;
+            try { return JSON.parse(atob(token().split('.')[1])); }
+            catch { return null; }
+        }
+        function isAdmin() {
+            const claims = decodeToken();
+            return claims?.role === "Admin" ||
+                claims?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] === "Admin" ||
+                claims?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role"] === "Admin";
+        }
+        function requireLogin() {
+            if (!token()) { alert("Önce giriş yapmalısın."); return false; }
+            return true;
+        }
+        async function readResponse(response) {
+            const data = await response.json().catch(() => ({}));
+            if (response.status === 401) alert("Oturum geçersiz veya süresi dolmuş.");
+            else if (response.status === 403) alert("Bu işlem için yetkin yok.");
+            else if (!response.ok) alert(data.message || "İşlem başarısız.");
+            return { response, data };
+        }
+        function updateSession() {
+            const claims = decodeToken();
+            const signedIn = claims !== null;
+            document.body.classList.toggle("signed-in", signedIn);
+            $("session").textContent = signedIn ? "Oturum açık." : "Oturum açılmadı.";
+            $("logoutTopButton").textContent = signedIn ? "Çıkış Yap" : "Giriş Yap";
+            $("logoutTopButton").style.display = signedIn ? "inline-block" : "none";
+            $("profileTopButton").style.display = signedIn ? "inline-block" : "none";
+            $("authSection").style.display = signedIn ? "none" : "block";
+            document.querySelectorAll(".app-content").forEach(element => {
+                element.classList.toggle("section-active", signedIn && element.id === activeSectionId);
+                element.style.display = signedIn
+                    ? (element.classList.contains("intro") || element.id === activeSectionId ? "block" : "none")
+                    : "none";
             });
-
-            const sonuc = await cevap.json();
-
-            if (cevap.ok) {
-                alert("Kayıt başarılı.");
-                document.getElementById("registerForm").reset();
+            document.querySelectorAll(".admin-only").forEach(element => {
+                element.style.display = signedIn && isAdmin() ? "block" : "none";
+            });
+            document.querySelectorAll(".user-only").forEach(element => {
+                element.style.display = signedIn && !isAdmin()
+                    ? (element.closest(".sidebar") ? "flex" : "block")
+                    : "none";
+            });
+            document.querySelectorAll(".sidebar .admin-only").forEach(element => {
+                element.style.display = signedIn && isAdmin() ? "flex" : "none";
+            });
+            document.querySelectorAll(".grid > .app-content").forEach(element => {
+                element.classList.toggle("section-active", signedIn && element.id === activeSectionId);
+                element.style.display = signedIn && element.id === activeSectionId ? "block" : "none";
+            });
+            $("introTitle").textContent = isAdmin() ? "Yönetim Paneli" : "Kontrol Paneli";
+            $("introDescription").textContent = isAdmin()
+                ? "Kullanıcıları, müşterileri ve sistem işlemlerini yönet."
+                : "Gelirlerini, giderlerini ve bütçeni tek ekrandan yönet.";
+            document.querySelector(".account-nav-label").textContent = isAdmin()
+                ? "Hesap yönetimi"
+                : "Hesaplarım";
+            if (signedIn) {
+                $("profileSection").style.display = "none";
+            }
+            if (!signedIn) return;
+            setupScrollAnimations();
+            setupNavigationObserver();
+            if (!isAdmin()) {
+                $("budgetEntryDate").value = todayInIstanbul();
+                $("reportMonth").value = todayInIstanbul().slice(0, 7);
+                loadDashboard();
+                loadBudgetEntries();
+            }
+            loadProfile();
+            loadBudgetCategories();
+            loadMerchantRules();
+            loadAccounts();
+            if (isAdmin()) {
+                loadAdminDashboard();
+                loadUsers();
+                loadAuditLogs();
+                loadDepositRequests();
             } else {
-                alert(sonuc.message || "Kayıt başarısız.");
+                loadDepositRequests();
             }
         }
-
-        async function loginOl() {
-            const user = {
-                userName: document.getElementById("loginUserName").value,
-                password: document.getElementById("loginPassword").value
-            };
-
-            const cevap = await fetch("/api/v1/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(user)
-            });
-
-            const sonuc = await cevap.json();
-
-            if (cevap.ok) {
-                alert("Giriş başarılı.");
-                document.getElementById("loginForm").reset();
-            } else {
-                alert(sonuc.message || "Giriş başarısız.");
+        async function register(event) {
+            event.preventDefault();
+            const result = await readResponse(await fetch("/api/v1/auth/register", {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({
+                    userName: $("registerUserName").value,
+                    password: $("registerPassword").value,
+                    email: $("registerEmail").value,
+                    phone: $("registerPhone").value
+                })
+            }));
+            if (result.response.ok) { alert(result.data.message); $("registerForm").reset(); }
+        }
+        async function login(event) {
+            event.preventDefault();
+            const result = await readResponse(await fetch("/api/v1/auth/login", {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({ userName: $("loginUserName").value, password: $("loginPassword").value, loginType: selectedLoginType })
+            }));
+            if (result.response.ok) {
+                localStorage.setItem("token", result.data.token);
+                $("loginForm").reset();
+                showWelcome(result.data.userName, selectedLoginType === "Admin");
+                updateSession();
             }
         }
-
-        document.getElementById("registerForm")
-            .addEventListener("submit", function (event) {
-                event.preventDefault();
-                registerOl();
-            });
-
-        document.getElementById("loginForm")
-            .addEventListener("submit", function (event) {
-                event.preventDefault();
-                loginOl();
-            });
-
-        async function musterileriGetir() {
-            const cevap = await fetch("/api/v1/customers");
-            const musteriler = await cevap.json();
-
-            const liste = document.getElementById("musteriListesi");
-            liste.innerHTML = "";
-
-            musteriler.forEach(musteri => {
-                const satir = document.createElement("li");
-
-                satir.innerHTML = `
-                    ${musteri.fullName} -
-                    ${musteri.email} -
-                    ${musteri.phone}
-
-                    <button onclick="musteriDuzenle(${musteri.id})">
-                        Düzenle
-                    </button>
-
-                    <button onclick="musteriSil(${musteri.id})">
-                        Sil
-                    </button>
-                `;
-
-                liste.appendChild(satir);
-            });
-        }
-
-        async function musteriDuzenle(id) {
-            const cevap = await fetch(`/api/v1/customers/${id}`);
-            const musteri = await cevap.json();
-
-            document.getElementById("musteriId").value = musteri.id;
-            document.getElementById("fullName").value = musteri.fullName;
-            document.getElementById("email").value = musteri.email;
-            document.getElementById("phone").value = musteri.phone;
-
-            document.getElementById("kaydetButton").textContent =
-                "Müşteriyi Güncelle";
-
-            document.getElementById("iptalButton").hidden = false;
-        }
-
-        async function musteriSil(id) {
-            const cevap = await fetch(`/api/v1/customers/${id}`, {
-                method: "DELETE"
-            });
-
-            if (cevap.ok) {
-                alert("Müşteri silindi.");
-                musterileriGetir();
-            } else {
-                alert("Müşteri silinemedi.");
-            }
-        }
-
-        document.getElementById("musteriForm")
-            .addEventListener("submit", async function (event) {
-                event.preventDefault();
-
-                const id = document.getElementById("musteriId").value;
-
-                const musteri = {
-                    fullName: document.getElementById("fullName").value,
-                    email: document.getElementById("email").value,
-                    phone: document.getElementById("phone").value
-                };
-
-                const url = id
-                    ? `/api/v1/customers/${id}`
-                    : "/api/v1/customers";
-
-                const method = id ? "PUT" : "POST";
-
-                const cevap = await fetch(url, {
-                    method: method,
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(musteri)
-                });
-
-                if (cevap.ok) {
-                    alert(id
-                        ? "Müşteri güncellendi."
-                        : "Müşteri eklendi.");
-
-                    formuTemizle();
-                    musterileriGetir();
-                } else {
-                    alert("İşlem başarısız.");
+        async function forgotPassword(event) {
+            event.preventDefault();
+            const result = await readResponse(await fetch("/api/v1/auth/forgot-password", {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({ userName: $("forgotUserName").value })
+            }));
+            if (result.response.ok) {
+                alert(result.data.resetToken
+                    ? `Geliştirme tokenı: ${result.data.resetToken}`
+                    : result.data.message);
+                if (result.data.resetToken) {
+                    $("resetUserName").value = $("forgotUserName").value;
+                    $("resetToken").value = result.data.resetToken;
                 }
+            }
+        }
+        async function resetPassword(event) {
+            event.preventDefault();
+            const result = await readResponse(await fetch("/api/v1/auth/reset-password", {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({
+                    userName: $("resetUserName").value,
+                    token: $("resetToken").value,
+                    newPassword: $("newPassword").value
+                })
+            }));
+            if (result.response.ok) {
+                alert("Şifre başarıyla yenilendi. Yeni şifrenle giriş yapabilirsin.");
+                $("resetForm").reset();
+            }
+        }
+        function formatMoney(value) {
+            return new Intl.NumberFormat("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value || 0);
+        }
+        function calculateBudgetTotals(entries = []) {
+            const totalIncome = entries
+                .filter(entry => entry.type === "Income")
+                .reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+            const totalExpense = entries
+                .filter(entry => entry.type === "Expense")
+                .reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+            return { totalIncome, totalExpense, availableBalance: totalIncome - totalExpense };
+        }
+        function renderInvestmentSummary(entries = []) {
+            const investments = entries.filter(entry => {
+                const category = String(entry.category || "").toLocaleLowerCase("tr-TR");
+                return category.includes("yatırım") || category.includes("yatirim") || category.includes("varlık") || category.includes("varlik");
+            });
+            const investmentIncome = investments.filter(entry => entry.type === "Income").reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+            const investmentExpense = investments.filter(entry => entry.type === "Expense").reduce((sum, entry) => sum + Number(entry.amount || 0), 0);
+            $("investmentIncome").textContent = formatMoney(investmentIncome);
+            $("investmentExpense").textContent = formatMoney(investmentExpense);
+            $("investmentNet").textContent = formatMoney(investmentIncome - investmentExpense);
+            $("investmentRecentList").innerHTML = investments.length
+                ? `<table><tr><th>Tarih</th><th>Açıklama</th><th>Tür</th><th>Tutar</th><th>Para birimi</th></tr>${investments.slice(0, 5).map(entry => `<tr><td>${formatDate(entry.entryDate)}</td><td>${entry.description || "-"}</td><td>${entry.type === "Income" ? "Gelir" : "Gider"}</td><td class="${entry.type === "Income" ? "budget-income" : "budget-expense"}">${entry.type === "Income" ? "+" : "-"}${formatMoney(entry.amount)}</td><td>TL</td></tr>`).join("")}</table>`
+                : "<p>Henüz yatırım işlemi bulunmuyor. Kategori kurallarından altın, döviz veya kuyumcu kelimelerini yatırım kategorisine bağlayabilirsin.</p>";
+        }
+        function todayInIstanbul() {
+            return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Istanbul" }).format(new Date());
+        }
+        function renderBudgetEntries(data) {
+            budgetEntryData = data.entries || [];
+            const totalPages = Math.max(1, Math.ceil(budgetEntryData.length / budgetPageSize));
+            budgetPage = Math.min(budgetPage, totalPages);
+            const totals = calculateBudgetTotals(budgetEntryData);
+            renderInvestmentSummary(data.investments || []);
+            $("budgetTotalIncome").textContent = formatMoney(totals.totalIncome);
+            $("budgetTotalExpense").textContent = formatMoney(totals.totalExpense);
+            $("budgetAvailableBalance").textContent = formatMoney(data.bankBalance ?? totals.availableBalance);
+            $("budgetCashBalance").textContent = formatMoney(data.cashBalance || 0);
+            $("budgetTotalAssets").textContent = formatMoney(data.totalAssets ?? data.bankBalance ?? totals.availableBalance);
+            const start = (budgetPage - 1) * budgetPageSize;
+            const visibleEntries = budgetEntryData.slice(start, start + budgetPageSize);
+            $("budgetEntryList").innerHTML = budgetEntryData.length
+                ? `<table><tr><th>Tarih</th><th>Tür</th><th>Kategori</th><th>Açıklama</th><th>Kaynak</th><th>Tutar</th><th>Para birimi</th><th>İşlem</th></tr>${visibleEntries.map(entry => {
+                    const income = entry.type === "Income";
+                    return `<tr><td>${formatDate(entry.entryDate)}</td><td>${income ? "Gelir" : "Gider"}</td><td>${entry.category}</td><td>${entry.description || "-"}</td><td>${entry.source || "Manuel kayıt"}</td><td class="${income ? "budget-income" : "budget-expense"}">${income ? "+" : "-"}${formatMoney(entry.amount)}</td><td>TL</td><td><button type="button" onclick="editBudgetEntry(${entry.id})">Düzenle</button> <button type="button" onclick="deleteBudgetEntry(${entry.id})">Sil</button></td></tr>`;
+                }).join("")}</table>${renderBudgetPagination(totalPages)}`
+                : "<p>Henüz gelir veya gider kaydı bulunmuyor.</p>";
+        }
+        function renderBudgetPagination(totalPages) {
+            if (totalPages <= 1) return "";
+            const buttons = [];
+            if (budgetPage > 1) buttons.push(`<button type="button" onclick="changeBudgetPage(${budgetPage - 1})" aria-label="Önceki sayfa">‹</button>`);
+            for (let page = 1; page <= totalPages; page++) {
+                buttons.push(`<button type="button" class="${page === budgetPage ? "active" : ""}" onclick="changeBudgetPage(${page})">${page}</button>`);
+            }
+            if (budgetPage < totalPages) buttons.push(`<button type="button" onclick="changeBudgetPage(${budgetPage + 1})" aria-label="Sonraki sayfa">›</button>`);
+            return `<div class="pagination" aria-label="Hesap hareketleri sayfalama">${buttons.join("")}</div>`;
+        }
+        function changeBudgetPage(page) {
+            const totalPages = Math.max(1, Math.ceil(budgetEntryData.length / budgetPageSize));
+            budgetPage = Math.max(1, Math.min(page, totalPages));
+            renderBudgetEntries({ entries: budgetEntryData });
+        }
+        function renderBudgetReport() {
+            const month = $("reportMonth").value;
+            const entries = budgetEntryData.filter(entry => String(entry.entryDate).slice(0, 7) === month);
+            const income = entries.filter(entry => entry.type === "Income").reduce((sum, entry) => sum + Number(entry.amount), 0);
+            const expense = entries.filter(entry => entry.type === "Expense").reduce((sum, entry) => sum + Number(entry.amount), 0);
+            $("reportIncome").textContent = formatMoney(income);
+            $("reportExpense").textContent = formatMoney(expense);
+            $("reportBalance").textContent = formatMoney(income - expense);
+
+            const categoryTotals = entries
+                .filter(entry => entry.type === "Expense")
+                .reduce((result, entry) => {
+                    result[entry.category] = (result[entry.category] || 0) + Number(entry.amount);
+                    return result;
+                }, {});
+            const categories = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
+            const maxCategoryAmount = categories[0]?.[1] || 1;
+            $("categoryReport").innerHTML = categories.length
+                ? categories.map(([category, amount]) => `<div class="category-row"><div class="category-row-header"><span>${category}</span><strong>${formatMoney(amount)}</strong></div><div class="category-bar"><span style="width:${Math.max(4, amount / maxCategoryAmount * 100)}%"></span></div></div>`).join("")
+                : "<p>Bu ay için gider kaydı bulunmuyor.</p>";
+            renderExpenseChart(categories);
+
+            $("monthlyReportList").innerHTML = entries.length
+                ? entries.slice(0, 8).map(entry => `<div class="monthly-report-item"><span>${formatDate(entry.entryDate)} · ${entry.category}</span><strong class="${entry.type === "Income" ? "budget-income" : "budget-expense"}">${entry.type === "Income" ? "+" : "-"}${formatMoney(entry.amount)}</strong></div>`).join("")
+                : "<p>Bu ay için kayıt bulunmuyor.</p>";
+        }
+        function renderExpenseChart(categories) {
+            const canvas = $("expensePieChart");
+            const legend = $("expenseChartLegend");
+            const context = canvas.getContext("2d");
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            if (!categories.length) {
+                legend.innerHTML = "<p>Bu ay için gider kaydı bulunmuyor.</p>";
+                return;
+            }
+
+            const colors = ["#7c3aed", "#2563eb", "#db2777", "#ea580c", "#16a34a", "#0891b2", "#ca8a04", "#64748b"];
+            const total = categories.reduce((sum, [, amount]) => sum + amount, 0);
+            const center = canvas.width / 2;
+            const radius = 94;
+            let startAngle = -Math.PI / 2;
+            context.lineWidth = 2;
+            context.strokeStyle = "#f8fbff";
+
+            categories.forEach(([category, amount], index) => {
+                const endAngle = startAngle + (amount / total) * Math.PI * 2;
+                context.beginPath();
+                context.moveTo(center, center);
+                context.arc(center, center, radius, startAngle, endAngle);
+                context.closePath();
+                context.fillStyle = colors[index % colors.length];
+                context.fill();
+                context.stroke();
+                startAngle = endAngle;
             });
 
-        function formuTemizle() {
-            document.getElementById("musteriForm").reset();
-            document.getElementById("musteriId").value = "";
-
-            document.getElementById("kaydetButton").textContent =
-                "Müşteri Ekle";
-
-            document.getElementById("iptalButton").hidden = true;
+            legend.innerHTML = categories.map(([category, amount], index) => {
+                const percentage = amount / total * 100;
+                const color = colors[index % colors.length];
+                return `<div class="expense-legend-item"><span class="expense-legend-label"><span class="expense-legend-dot" style="background:${color}"></span>${category}</span><strong>${percentage.toFixed(1)}% · ${formatMoney(amount)}</strong></div>`;
+            }).join("");
         }
+        function renderBudgetLimits(limits = []) {
+            budgetLimitData = limits;
+            $("budgetLimitList").innerHTML = limits.length
+                ? limits.map(limit => {
+                    const percentage = limit.limitAmount > 0 ? Number(limit.spent) / Number(limit.limitAmount) * 100 : 0;
+                    const width = Math.min(100, Math.max(3, percentage));
+                    const remaining = Number(limit.limitAmount) - Number(limit.spent);
+                    return `<div class="limit-row"><div class="limit-row-header"><span>${limit.category}</span><strong>${formatMoney(limit.spent)} / ${formatMoney(limit.limitAmount)}</strong></div><div class="limit-bar"><span class="${percentage > 100 ? "over" : ""}" style="width:${width}%"></span></div><small>${remaining >= 0 ? `${formatMoney(remaining)} kaldı` : `${formatMoney(Math.abs(remaining))} limit aşıldı`} <button type="button" onclick="deleteBudgetLimit(${limit.id})">Kaldır</button></small></div>`;
+                }).join("")
+                : "<p>Bu ay için limit belirlenmedi.</p>";
+        }
+        async function loadBudgetLimits() {
+            if (!requireLogin() || isAdmin()) return;
+            const month = $("reportMonth").value;
+            const result = await readResponse(await fetch(`/api/v1/budget-limits?month=${encodeURIComponent(month)}`, { headers: authHeaders() }));
+            if (result.response.ok) renderBudgetLimits(result.data);
+        }
+        async function saveBudgetLimit(event) {
+            event.preventDefault();
+            const result = await readResponse(await fetch("/api/v1/budget-limits", {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({
+                    month: $("reportMonth").value,
+                    category: $("budgetLimitCategory").value,
+                    limitAmount: Number($("budgetLimitAmount").value)
+                })
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                $("budgetLimitForm").reset();
+                await loadBudgetLimits();
+            }
+        }
+        async function deleteBudgetLimit(id) {
+            if (!confirm("Bu kategori bütçe limiti kaldırılsın mı?")) return;
+            const result = await readResponse(await fetch(`/api/v1/budget-limits/${id}`, {
+                method: "DELETE", headers: authHeaders()
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                await loadBudgetLimits();
+            }
+        }
+        async function loadBudgetEntries() {
+            if (!requireLogin() || isAdmin()) return;
+            const result = await readResponse(await fetch("/api/v1/budget-entries", { headers: authHeaders() }));
+            if (result.response.ok) {
+                if (!budgetCategoryData.length) await loadBudgetCategories();
+                budgetPage = 1;
+                renderBudgetEntries(result.data);
+                renderBudgetReport();
+                await loadBudgetLimits();
+                await loadReceivables();
+            }
+        }
+
+        function renderTransactionReviews() {
+            if (!transactionReviewData.length) {
+                $("transactionReviewList").innerHTML = "<p>İnceleme bekleyen işlem bulunmuyor.</p>";
+                return;
+            }
+            $("transactionReviewList").innerHTML = `<table><tr><th>Tarih</th><th>İşlem</th><th>Açıklama</th><th>Tutar</th><th>Para birimi</th><th>Amacı ve kategorisi</th></tr>${transactionReviewData.map(item => { const income = item.type === "Income"; return `<tr><td>${formatDate(item.entryDate)}</td><td>${item.kind}</td><td>${item.description || "-"}</td><td class="${income ? "budget-income" : "budget-expense"}">${income ? "+" : "-"}${formatMoney(item.amount)}</td><td>TL</td><td><select id="reviewCategory-${item.id}">${reviewCategoryOptions(item)}</select><select id="reviewDecision-${item.id}" onchange="toggleReviewPerson(${item.id}, this.value)"><option value="budget">Bu kategoriye kaydet</option><option value="receivable">Borç verdim / Alacaklarım</option><option value="payable">Borç aldım / Vereceklerim</option><option value="cash">Nakit hareketi</option><option value="other">Diğer / Hariç tut</option></select><input id="reviewPerson-${item.id}" placeholder="Kişi adı" hidden><input id="reviewNote-${item.id}" placeholder="Açıklama (isteğe bağlı)"><button type="button" onclick="resolveTransactionReview(${item.id})">Kaydet</button></td></tr>`; }).join("")}</table>`;
+            replaceCariLabels();
+        }
+        function replaceCariLabels() {
+            document.querySelectorAll("option").forEach(option => {
+                if (option.textContent.includes("Vereceklerim")) option.textContent = option.textContent.replace("Vereceklerim", "Borçlarım");
+                if (option.textContent.includes("Alacaklarım")) option.textContent = option.textContent.replace("Alacaklarım", "Bana ödenecekler");
+            });
+        }
+        function reviewCategoryOptions(item) {
+            const categories = budgetCategoryData
+                .filter(category => category.type === item.type)
+                .map(category => category.name)
+                .filter(category => !["Para Transferi", "Para Yatırma", "Para Çekme"].includes(category));
+            if (!categories.length) return `<option value="Diğer">Diğer</option>`;
+            return categories.map(category => `<option value="${category}" ${category === "Diğer" ? "selected" : ""}>${category}</option>`).join("");
+        }
+        function toggleReviewPerson(id, decision) {
+            const input = $("reviewPerson-" + id);
+            if (input) input.hidden = decision !== "receivable";
+        }
+        async function resolveTransactionReview(id) {
+            const decision = $("reviewDecision-" + id)?.value;
+            const category = $("reviewCategory-" + id)?.value || "Diğer";
+            const person = $("reviewPerson-" + id);
+            const note = $("reviewNote-" + id)?.value || "";
+            if (decision === "receivable" && !person?.value.trim()) {
+                alert("Alacak kaydı için kişi adını yazmalısın.");
+                return;
+            }
+            const item = transactionReviewData.find(row => row.id === id);
+            const result = await readResponse(await fetch(`/api/v1/transaction-reviews/${id}/resolve`, {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({
+                    decision,
+                    personName: person?.value || "",
+                    note,
+                    category
+                })
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                await loadBudgetEntries();
+            }
+        }
+        async function loadTransactionReviews() {
+            if (!requireLogin() || isAdmin()) return;
+            const result = await readResponse(await fetch("/api/v1/transaction-reviews", { headers: authHeaders() }));
+            if (result.response.ok) {
+                transactionReviewData = result.data || [];
+                renderTransactionReviews();
+            }
+        }
+        function renderReceivables() {
+            const renderRows = items => items.length
+                ? `<table><tr><th>Kişi</th><th>Tarih</th><th>Açıklama</th><th>Tutar</th><th>Para birimi</th><th>Durum</th></tr>${items.map(item => `<tr><td>${item.personName}</td><td>${formatDate(item.entryDate)}</td><td>${item.description || "-"}</td><td class="budget-income">${formatMoney(item.amount)}</td><td>TL</td><td><span class="status-pill pending">${item.status}</span></td></tr>`).join("")}</table>`
+                : "<p>Kayıt bulunmuyor.</p>";
+            $("receivableList").innerHTML = renderRows(receivableData.filter(item => item.direction === "Receivable"));
+            $("payableList").innerHTML = renderRows(receivableData.filter(item => item.direction === "Payable"));
+        }
+        async function loadReceivables() {
+            if (!requireLogin() || isAdmin()) return;
+            const result = await readResponse(await fetch("/api/v1/transaction-reviews/receivables", { headers: authHeaders() }));
+            if (result.response.ok) {
+                receivableData = result.data || [];
+                renderReceivables();
+            }
+        }
+        async function createBudgetEntry(event) {
+            event.preventDefault();
+            const entryId = $("budgetEntryId").value;
+            const result = await readResponse(await fetch(entryId ? `/api/v1/budget-entries/${entryId}` : "/api/v1/budget-entries", {
+                method: entryId ? "PUT" : "POST", headers: authHeaders(true),
+                body: JSON.stringify({
+                    type: $("budgetEntryType").value,
+                    category: $("budgetCategory").value,
+                    description: $("budgetDescription").value,
+                    amount: Number($("budgetAmount").value),
+                    entryDate: $("budgetEntryDate").value
+                })
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                resetBudgetEntryForm();
+                await loadBudgetEntries();
+            }
+        }
+        async function importStatement(event) {
+            event.preventDefault();
+            const file = $("statementExcelFile").files[0];
+            if (!file) {
+                alert("Lütfen bir Excel veya PDF ekstre dosyası seçin.");
+                return;
+            }
+            const formData = new FormData();
+            formData.append("file", file);
+            const result = await readResponse(await fetch("/api/v1/statements/import?preview=true", {
+                method: "POST", headers: authHeaders(), body: formData
+            }));
+            if (result.response.ok) {
+                pendingStatementRows = result.data.rows || [];
+                $("statementPreview").hidden = false;
+                $("statementPreviewList").innerHTML = pendingStatementRows.length
+                    ? `<table><tr><th>Tarih</th><th>Açıklama</th><th>Tür</th><th>Kategori</th><th>Tutar</th><th>Para birimi</th></tr>${pendingStatementRows.slice(0, 100).map((row, index) => `<tr><td>${formatDate(row.entryDate)}</td><td>${row.description}</td><td>${row.type === "Income" ? "Gelir" : "Gider"}</td><td><select class="statement-category-select" data-statement-category-index="${index}">${statementCategoryOptions(row)}</select></td><td class="${row.type === "Income" ? "budget-income" : "budget-expense"}">${row.type === "Income" ? "+" : "-"}${formatMoney(row.amount)}</td><td>TL</td></tr>`).join("")}</table><small>${pendingStatementRows.length} kayıt hazırlandı. ${result.data.skipped || 0} kayıt atlandı.</small>`
+                    : (result.data.parsed > 0
+                        ? `<p class="muted-text">${result.data.parsed} işlem okundu; ${result.data.skipped || 0} işlem zaten sistemde kayıtlı olduğu için tekrar eklenmedi.</p>`
+                        : "<p>PDF/Excel içinde okunabilir işlem bulunamadı.</p>");
+                if (pendingStatementRows.length) {
+                    $("statementPreviewList").innerHTML = renderStatementPreview(result.data.skipped || 0);
+                    replaceCariLabels();
+                }
+            }
+        }
+        function renderStatementPreview(skipped) {
+            const rows = pendingStatementRows.slice(0, 100);
+            return "<p class=\"muted-text\">İşlemler henüz kaydedilmedi. Transfer, para yatırma ve para çekme satırlarında önce amaç ve kategori seçmelisin.</p><table><tr><th>Tarih</th><th>Açıklama</th><th>Tür</th><th>Kategori</th><th>Tutar</th><th>Para birimi</th><th>İşlem amacı</th></tr>" +
+                rows.map((row, index) => "<tr><td>" + formatDate(row.entryDate) + "</td><td>" + row.description + "</td><td>" + (row.type === "Income" ? "Gelir" : "Gider") + "</td><td><select class=\"statement-category-select\" data-statement-category-index=\"" + index + "\">" + statementCategoryOptions(row) + "</select></td><td>" + (row.type === "Income" ? "+" : "-") + formatMoney(row.amount) + "</td><td>TL</td><td>" + statementDecisionOptions(row, index) + "</td></tr>").join("") +
+                "</table><small>" + pendingStatementRows.length + " kayıt hazırlandı. " + skipped + " kayıt atlandı.</small>";
+        }
+        function statementDecisionOptions(row, index) {
+            if (row.treatment !== "NeedsReview") return "Bütçeye kaydedilecek";
+            return "<select data-statement-decision-index=\"" + index + "\" onchange=\"toggleStatementDecision(" + index + ", this.value)\"><option value=\"\">Amaç seçin</option><option value=\"Budget\">Gelir/gider kategorisi</option><option value=\"Receivable\">Borç verdim / Alacaklarım</option><option value=\"Payable\">Borç aldım / Vereceklerim</option><option value=\"CashWithdrawal\">Bankadan nakit çektim</option><option value=\"CashDeposit\">Bankaya nakit yatırdım</option><option value=\"Excluded\">Diğer / Hariç tut</option></select><input data-statement-person-index=\"" + index + "\" placeholder=\"Kişi adı\" hidden><input data-statement-note-index=\"" + index + "\" placeholder=\"Açıklama\" hidden>";
+        }
+        function toggleStatementDecision(index, decision) {
+            const person = document.querySelector("[data-statement-person-index=\"" + index + "\"]");
+            const note = document.querySelector("[data-statement-note-index=\"" + index + "\"]");
+            if (person) person.hidden = !["Receivable", "Payable"].includes(decision);
+            if (note) note.hidden = !["Receivable", "Payable"].includes(decision);
+        }
+        function statementCategoryOptions(row) {
+            const categories = budgetCategoryData.filter(category => category.type === row.type).map(category => category.name).filter(category => !["Para Transferi", "Para Yatırma", "Para Çekme"].includes(category));
+            if (!categories.includes("Yatırım / Varlıklarım")) categories.push("Yatırım / Varlıklarım");
+            if (row.type === "Income" && !categories.includes("Harçlık")) categories.push("Harçlık");
+            if (!categories.includes("Diğer")) categories.push("Diğer");
+            if (!categories.includes("Belirsiz")) categories.push("Belirsiz");
+            return categories.map(category => `<option value="${category}" ${category === row.category ? "selected" : ""}>${category}</option>`).join("");
+        }
+        async function confirmStatementImport() {
+            if (!pendingStatementRows.length) {
+                alert("Önizlemede kaydedilecek işlem bulunmuyor.");
+                return;
+            }
+            const selectedRows = pendingStatementRows.map((row, index) => ({
+                ...row,
+                category: document.querySelector(`[data-statement-category-index="${index}"]`)?.value || row.category,
+                treatment: row.treatment === "NeedsReview" ? document.querySelector(`[data-statement-decision-index="${index}"]`)?.value : "Budget",
+                personName: document.querySelector(`[data-statement-person-index="${index}"]`)?.value || "",
+                note: document.querySelector(`[data-statement-note-index="${index}"]`)?.value || ""
+            }));
+            if (selectedRows.some(row => row.treatment === "" || row.treatment === undefined)) {
+                alert("Transfer, para yatırma ve para çekme işlemlerinin amacını seçmelisin.");
+                return;
+            }
+            if (selectedRows.some(row => ["Receivable", "Payable"].includes(row.treatment) && !row.personName.trim())) {
+                alert("Borç kaydı için kişi adı yazmalısın.");
+                return;
+            }
+            const result = await readResponse(await fetch("/api/v1/statements/confirm", {
+                method: "POST", headers: authHeaders(true), body: JSON.stringify({ rows: selectedRows })
+            }));
+            if (result.response.ok) {
+                pendingStatementRows = [];
+                $("statementPreview").hidden = true;
+                $("statementImportForm").reset();
+                await loadBudgetEntries();
+                await loadMerchantRules();
+                alert(result.data.message);
+            }
+        }
+        function cancelStatementImport() {
+            pendingStatementRows = [];
+            $("statementPreview").hidden = true;
+            $("statementPreviewList").innerHTML = "";
+            $("statementImportForm").reset();
+        }
+        function renderMerchantRules() {
+            const totalPages = Math.max(1, Math.ceil(merchantRuleData.length / merchantRulePageSize));
+            merchantRulePage = Math.min(merchantRulePage, totalPages);
+            if (!merchantRuleData.length) {
+                $("personalRuleList").innerHTML = "<p>Henüz kişisel kategori kuralı bulunmuyor.</p>";
+                return;
+            }
+
+            const start = (merchantRulePage - 1) * merchantRulePageSize;
+            const visibleRules = merchantRuleData.slice(start, start + merchantRulePageSize);
+            const pagination = totalPages > 1
+                ? `<div class="pagination" aria-label="Öğrenilen işletme kuralları sayfalama">${Array.from({ length: totalPages }, (_, index) => {
+                    const page = index + 1;
+                    return `<button type="button" class="${page === merchantRulePage ? "active" : ""}" onclick="changeMerchantRulePage(${page})">${page}</button>`;
+                }).join("")}</div>`
+                : "";
+            $("personalRuleList").innerHTML = `<table><tr><th>Anahtar kelime</th><th>Tür</th><th>Kategori</th><th>Kaynak</th><th>İşlem</th></tr>${visibleRules.map(rule => `<tr><td>${rule.keyword}</td><td>${rule.type === "Income" ? "Gelir" : "Gider"}</td><td>${rule.category}</td><td>${rule.source}</td><td>${rule.source === "Kullanıcı" ? `<button type="button" onclick="deleteMerchantRule(${rule.id})">Kaldır</button>` : "-"}</td></tr>`).join("")}</table>${pagination}`;
+        }
+        function changeMerchantRulePage(page) {
+            const totalPages = Math.max(1, Math.ceil(merchantRuleData.length / merchantRulePageSize));
+            merchantRulePage = Math.max(1, Math.min(page, totalPages));
+            renderMerchantRules();
+        }
+        async function loadMerchantRules() {
+            if (!requireLogin()) return;
+            const result = await readResponse(await fetch("/api/v1/merchant-rules", { headers: authHeaders() }));
+            if (!result.response.ok) return;
+            merchantRuleData = (result.data || []).filter(rule => rule.source === "Kullanıcı");
+            merchantRulePage = 1;
+            renderMerchantRules();
+        }
+        function populatePersonalRuleCategories() {
+            const type = $("personalRuleType").value;
+            const categories = budgetCategoryData.filter(category => category.type === type).map(category => category.name);
+            if (!categories.includes("Yatırım / Varlıklarım")) categories.push("Yatırım / Varlıklarım");
+            if (type === "Income" && !categories.includes("Harçlık")) categories.push("Harçlık");
+            if (!categories.includes("Diğer")) categories.push("Diğer");
+            $("personalRuleCategory").innerHTML = `<option value="">Kategori seçin</option>${categories.map(category => `<option value="${category}">${category}</option>`).join("")}`;
+        }
+        async function savePersonalRule(event) {
+            event.preventDefault();
+            const result = await readResponse(await fetch("/api/v1/merchant-rules", {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({
+                    keyword: $("personalRuleKeyword").value,
+                    category: $("personalRuleCategory").value,
+                    type: $("personalRuleType").value
+                })
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                $("personalRuleForm").reset();
+                populatePersonalRuleCategories();
+                await loadMerchantRules();
+            }
+        }
+        async function deleteMerchantRule(id) {
+            if (!confirm("Bu işletme kuralı kaldırılsın mı?")) return;
+            const result = await readResponse(await fetch(`/api/v1/merchant-rules/${id}`, {
+                method: "DELETE", headers: authHeaders()
+            }));
+            if (result.response.ok) await loadMerchantRules();
+        }
+        function editBudgetEntry(id) {
+            const entry = budgetEntryData.find(item => item.id === id);
+            if (!entry) return;
+            $("budgetEntryId").value = entry.id;
+            $("budgetEntryType").value = entry.type;
+            $("budgetCategory").value = entry.category;
+            $("budgetAmount").value = entry.amount;
+            $("budgetEntryDate").value = String(entry.entryDate).slice(0, 10);
+            $("budgetDescription").value = entry.description || "";
+            $("budgetEntrySubmitButton").textContent = "Güncelle";
+            $("budgetEntryCancelButton").hidden = false;
+            navigateToSection("budgetSection");
+        }
+        function resetBudgetEntryForm() {
+            $("budgetEntryForm").reset();
+            $("budgetEntryId").value = "";
+            $("budgetEntryType").value = "Income";
+            $("budgetEntryDate").value = todayInIstanbul();
+            $("budgetEntrySubmitButton").textContent = "Kayıt Ekle";
+            $("budgetEntryCancelButton").hidden = true;
+        }
+        async function deleteBudgetEntry(id) {
+            if (!confirm("Bu gelir/gider kaydı silinsin mi?")) return;
+            const result = await readResponse(await fetch(`/api/v1/budget-entries/${id}`, {
+                method: "DELETE", headers: authHeaders()
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                await loadBudgetEntries();
+            }
+        }
+        function animateNumber(element, target, formatter = value => Math.round(value).toLocaleString("tr-TR")) {
+            const start = Number(element.dataset.currentValue || 0);
+            const end = Number(target || 0);
+            const startTime = performance.now();
+            const duration = 750;
+            function frame(now) {
+                const progress = Math.min((now - startTime) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                element.textContent = formatter(start + (end - start) * eased);
+                if (progress < 1) requestAnimationFrame(frame);
+                else element.dataset.currentValue = end;
+            }
+            requestAnimationFrame(frame);
+        }
+        function animateMoney(element, target) {
+            animateNumber(element, target, value => formatMoney(value));
+        }
+        function setupScrollAnimations() {
+            if (!window.IntersectionObserver) {
+                document.querySelectorAll(".app-content").forEach(element => element.classList.add("is-visible"));
+                return;
+            }
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("is-visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: .12 });
+            document.querySelectorAll(".app-content:not(.scroll-reveal)").forEach((element, index) => {
+                element.classList.add("scroll-reveal");
+                element.style.transitionDelay = `${Math.min(index * 60, 240)}ms`;
+                observer.observe(element);
+            });
+        }
+        let navigationObserver;
+        function setupNavigationObserver() {
+            if (navigationObserver || !window.IntersectionObserver) return;
+            const targets = [...document.querySelectorAll(".sidebar button[data-target]")]
+                .map(button => $(button.dataset.target))
+                .filter(Boolean);
+            navigationObserver = new IntersectionObserver(entries => {
+                const visible = entries
+                    .filter(entry => entry.isIntersecting)
+                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+                if (!visible) return;
+                document.querySelectorAll(".sidebar button[data-target]").forEach(button => {
+                    button.classList.toggle("active", button.dataset.target === visible.target.id);
+                });
+            }, { rootMargin: "-104px 0px -55% 0px", threshold: [0, .2, .5] });
+            targets.forEach(target => navigationObserver.observe(target));
+        }
+        function parseServerDate(value) {
+            if (value instanceof Date) return value;
+            if (!value) return new Date(NaN);
+            const text = String(value);
+            // API tarihleri UTC olarak kaydediliyor. SQLite bazen sonuna Z eklemeden döndürür.
+            // Saat dilimi belirtilmiyorsa UTC kabul edip Türkiye saatine çeviriyoruz.
+            return new Date(/[zZ]|[+-]\d{2}:?\d{2}$/.test(text) ? text : `${text}Z`);
+        }
+        function formatDate(value) {
+            return new Intl.DateTimeFormat("tr-TR", {
+                dateStyle: "medium",
+                timeStyle: "short",
+                timeZone: "Europe/Istanbul"
+            }).format(parseServerDate(value));
+        }
+        function statusText(status) {
+            return ({ Pending: "Bekliyor", Approved: "Onaylandı", Rejected: "Reddedildi", Completed: "Tamamlandı", Failed: "Başarısız", Cancelled: "İptal" })[status] || status;
+        }
+        function transactionTable(items, emptyText = "Henüz işlem bulunmuyor.") {
+            return items.length
+                ? `<table><tr><th>Tarih</th><th>İşlem</th><th>Hesap</th><th>Tutar</th><th>Para birimi</th><th>Durum</th></tr>${items.map(t => { const incoming = t.type === "deposit"; return `<tr><td>${formatDate(t.createdAt)}</td><td>${incoming ? "Para yatırma" : "Para transferi"}</td><td>${incoming ? t.accountNumber : `${t.senderAccountNumber} → ${t.receiverAccountNumber}`}</td><td class="${incoming ? "budget-income" : "budget-expense"}">${incoming ? "+" : "-"}${formatMoney(t.amount)}</td><td>TL</td><td><span class="status-pill ${t.status.toLowerCase()}">${statusText(t.status)}</span></td></tr>`; }).join('')}</table>`
+                : `<p>${emptyText}</p>`;
+        }
+        function renderTransactions(items = transactionData) {
+            $("recentTransactions").innerHTML = transactionTable(items.slice(0, 5));
+        }
+        function renderBudgetHistory() {
+            const search = $("transactionSearch").value.trim().toLocaleLowerCase("tr-TR");
+            const type = $("transactionTypeFilter").value;
+            const filtered = budgetEntryData.filter(item => {
+                const searchable = `${item.category} ${item.description || ""} ${item.type === "Income" ? "gelir" : "gider"}`
+                    .toLocaleLowerCase("tr-TR");
+                return (!search || searchable.includes(search)) &&
+                    (type === "all" || item.type === type);
+            });
+            $("transactionHistoryList").innerHTML = filtered.length
+                ? `<table><tr><th>Tarih</th><th>Tür</th><th>Kategori</th><th>Açıklama</th><th>Tutar</th><th>Para birimi</th></tr>${filtered.map(item => `<tr><td>${formatDate(item.entryDate)}</td><td>${item.type === "Income" ? "Gelir" : "Gider"}</td><td>${item.category}</td><td>${item.description || "-"}</td><td class="${item.type === "Income" ? "budget-income" : "budget-expense"}">${item.type === "Income" ? "+" : "-"}${formatMoney(item.amount)}</td><td>TL</td></tr>`).join("")}</table>`
+                : "<p>Filtreye uygun gelir/gider kaydı bulunamadı.</p>";
+        }
+        async function loadTransactionHistory() {
+            await loadBudgetEntries();
+            renderBudgetHistory();
+        }
+        function renderBudgetRecent(entries = []) {
+            $("recentTransactions").innerHTML = entries.length
+                ? `<table><tr><th>Tarih</th><th>Tür</th><th>Kategori</th><th>Tutar</th><th>Para birimi</th></tr>${entries.slice(0, 5).map(item => `<tr><td>${formatDate(item.entryDate)}</td><td>${item.type === "Income" ? "Gelir" : "Gider"}</td><td>${item.category}</td><td class="${item.type === "Income" ? "budget-income" : "budget-expense"}">${item.type === "Income" ? "+" : "-"}${formatMoney(item.amount)}</td><td>TL</td></tr>`).join("")}</table>`
+                : "Henüz gelir veya gider kaydı bulunmuyor.";
+        }
+        async function loadDashboard() {
+            if (!requireLogin()) return;
+            $("dashboardDate").textContent = new Intl.DateTimeFormat("tr-TR", {
+                dateStyle: "full",
+                timeZone: "Europe/Istanbul"
+            }).format(new Date());
+            const budgetResult = await readResponse(await fetch("/api/v1/budget-entries", { headers: authHeaders() }));
+            if (budgetResult.response.ok) {
+                budgetEntryData = budgetResult.data.entries || [];
+                renderInvestmentSummary(budgetResult.data.investments || []);
+                const totals = calculateBudgetTotals(budgetEntryData);
+                $("totalBalance").textContent = formatMoney(budgetResult.data.totalAssets ?? budgetResult.data.availableBalance ?? totals.availableBalance);
+                $("dashboardBankBalance").textContent = formatMoney(budgetResult.data.bankBalance ?? totals.availableBalance);
+                $("dashboardCashBalance").textContent = formatMoney(budgetResult.data.cashBalance || 0);
+                $("dashboardIncome").textContent = formatMoney(totals.totalIncome);
+                $("dashboardExpense").textContent = formatMoney(totals.totalExpense);
+                renderBudgetRecent(budgetEntryData);
+            }
+        }
+        async function loadAdminDashboard() {
+            if (!requireLogin() || !isAdmin()) return;
+            $("adminDashboardDate").textContent = new Intl.DateTimeFormat("tr-TR", {
+                dateStyle: "full",
+                timeZone: "Europe/Istanbul"
+            }).format(new Date());
+            const [usersResult, customersResult, auditResult] = await Promise.all([
+                readResponse(await fetch("/api/v1/users", { headers: authHeaders() })),
+                readResponse(await fetch("/api/v1/customers", { headers: authHeaders() })),
+                readResponse(await fetch("/api/v1/audit-logs", { headers: authHeaders() }))
+            ]);
+            if (usersResult.response.ok) {
+                const users = usersResult.data;
+                adminUserData = users;
+                $("adminTotalUsers").textContent = users.length;
+                $("adminPendingUsers").textContent = users.filter(user => !user.isApproved).length;
+                $("adminApprovedUsers").textContent = users.filter(user => user.isApproved).length;
+                renderSecurityUsers(users);
+            }
+            if (customersResult.response.ok) {
+                $("adminTotalCustomers").textContent = customersResult.data.length;
+            }
+            if (auditResult.response.ok) {
+                $("adminTotalAuditLogs").textContent = auditResult.data.length;
+                $("adminRecentActivity").innerHTML = auditResult.data.length
+                    ? `<table><tr><th>Tarih</th><th>Kullanıcı</th><th>İşlem</th></tr>${auditResult.data.slice(0, 5).map(log => `<tr><td>${formatDate(log.createdAt)}</td><td>${log.actorUserName}</td><td>${log.action}</td></tr>`).join("")}</table>`
+                    : "<p>Henüz işlem kaydı bulunmuyor.</p>";
+            }
+        }
+        function populateBudgetCategorySelects() {
+            const entryType = $("budgetEntryType").value;
+            const entryCategories = budgetCategoryData.filter(category => category.type === entryType);
+            $("budgetCategory").innerHTML = `<option value="">Kategori seçin</option>${entryCategories.map(category => `<option value="${category.name}">${category.name}</option>`).join("")}`;
+            const expenseCategories = budgetCategoryData.filter(category => category.type === "Expense");
+            $("budgetLimitCategory").innerHTML = `<option value="">Kategori seçin</option>${expenseCategories.map(category => `<option value="${category.name}">${category.name}</option>`).join("")}`;
+            if ($("personalRuleCategory")) populatePersonalRuleCategories();
+        }
+        async function loadBudgetCategories() {
+            if (!requireLogin()) return;
+            const endpoint = isAdmin() ? "/api/v1/budget-categories?includeInactive=true" : "/api/v1/budget-categories";
+            const result = await readResponse(await fetch(endpoint, { headers: authHeaders() }));
+            if (!result.response.ok) return;
+            adminAuditData = result.data;
+            budgetCategoryData = result.data.filter(category => isAdmin() || category.isActive);
+            populateBudgetCategorySelects();
+            if (isAdmin()) renderAdminCategories();
+        }
+        function renderAdminCategories() {
+            $("categoryList").innerHTML = budgetCategoryData.length
+                ? `<table><tr><th>Kategori</th><th>Tür</th><th>Durum</th><th>İşlem</th></tr>${budgetCategoryData.map(category => `<tr><td><input id="categoryName${category.id}" value="${category.name}"></td><td>${category.type === "Income" ? "Gelir" : "Gider"}</td><td>${category.isActive ? "Aktif" : "Pasif"}</td><td><button type="button" onclick="updateBudgetCategory(${category.id})">Güncelle</button>${category.isActive ? `<button type="button" onclick="toggleBudgetCategory(${category.id}, false)">Pasifleştir</button>` : `<button type="button" onclick="toggleBudgetCategory(${category.id}, true)">Aktifleştir</button>`}</td></tr>`).join("")}</table>`
+                : "<p>Kategori bulunmuyor.</p>";
+        }
+        async function saveBudgetCategory(event) {
+            event.preventDefault();
+            const id = $("categoryId").value;
+            const result = await readResponse(await fetch(id ? `/api/v1/budget-categories/${id}` : "/api/v1/budget-categories", {
+                method: id ? "PUT" : "POST", headers: authHeaders(true),
+                body: JSON.stringify({ name: $("categoryName").value, type: $("categoryType").value })
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                $("categoryForm").reset();
+                await loadBudgetCategories();
+            }
+        }
+        async function updateBudgetCategory(id) {
+            const name = $(`categoryName${id}`).value;
+            const result = await readResponse(await fetch(`/api/v1/budget-categories/${id}`, {
+                method: "PUT", headers: authHeaders(true), body: JSON.stringify({ name })
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                await loadBudgetCategories();
+            }
+        }
+        async function toggleBudgetCategory(id, active) {
+            const result = await readResponse(await fetch(`/api/v1/budget-categories/${id}${active ? "/activate" : ""}`, {
+                method: active ? "PUT" : "DELETE", headers: authHeaders()
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                await loadBudgetCategories();
+            }
+        }
+        async function loadProfile() {
+            const result = await readResponse(await fetch("/api/v1/auth/me", { headers: authHeaders() }));
+            if (!result.response.ok) return;
+            $("dashboardUserName").textContent = result.data.userName;
+            $("profileUserName").textContent = result.data.userName;
+            $("profileEmail").textContent = result.data.email || "Belirtilmemiş";
+            $("profilePhone").textContent = result.data.phone || "Belirtilmemiş";
+            $("profileRole").textContent = result.data.role;
+            $("profileEmailInput").value = result.data.email || "";
+            $("profilePhoneInput").value = result.data.phone || "";
+        }
+        async function updateProfile(event) {
+            event.preventDefault();
+            const result = await readResponse(await fetch("/api/v1/auth/me", {
+                method: "PUT", headers: authHeaders(true),
+                body: JSON.stringify({ email: $("profileEmailInput").value, phone: $("profilePhoneInput").value })
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                loadProfile();
+            }
+        }
+        async function changePassword(event) {
+            event.preventDefault();
+            if ($("newPasswordChange").value !== $("newPasswordAgain").value) {
+                alert("Yeni şifreler eşleşmiyor.");
+                return;
+            }
+            const result = await readResponse(await fetch("/api/v1/auth/change-password", {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({ currentPassword: $("currentPassword").value, newPassword: $("newPasswordChange").value })
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                $("changePasswordForm").reset();
+            }
+        }
+        async function loadAccounts() {
+            if (!requireLogin()) return;
+            const result = await readResponse(await fetch("/api/v1/accounts", { headers: authHeaders() }));
+            if (!result.response.ok) return;
+            $("accountList").innerHTML = result.data.length
+                ? `<div class="account-cards">${result.data.map(a => `<article class="account-card"><small>Vadesiz hesap · ID ${a.id}</small><strong><span class="balance-value" data-value="${a.balance}">₺0,00</span></strong><div class="account-card-meta"><span>${a.accountNumber}</span><span>${a.createdAt ? formatDate(a.createdAt) : ""}</span></div><div class="account-card-footer"><span class="account-status">${a.isActive ? "Aktif" : "Kapalı"}</span>${!isAdmin() && a.isActive ? `<button type="button" onclick="useAccountForTransfer(${a.id})">Transferde kullan</button>` : ""}</div></article>`).join('')}</div>`
+                : "Bağlı hesap bulunamadı.";
+            document.querySelectorAll(".balance-value").forEach(element => animateMoney(element, Number(element.dataset.value)));
+            if (!isAdmin()) {
+                $("depositAccountId").innerHTML = `<option value="">Hesap seçin</option>${result.data.filter(account => account.isActive).map(account => `<option value="${account.id}">${account.accountNumber} · ${formatMoney(account.balance)}</option>`).join("")}`;
+            }
+        }
+        function useAccountForTransfer(accountId) {
+            $("senderAccountId").value = accountId;
+            navigateToSection("transferSection");
+            $("receiverAccountId").focus();
+        }
+        async function createAccount(event) {
+            event.preventDefault();
+            const result = await readResponse(await fetch("/api/v1/accounts", {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({ customerId: Number($("accountCustomerId").value) })
+            }));
+            if (result.response.ok) { alert("Hesap oluşturuldu."); $("accountForm").reset(); loadAccounts(); }
+        }
+        async function createTransfer(event) {
+            event.preventDefault();
+            const result = await readResponse(await fetch("/api/v1/transfers", {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({ senderAccountId: Number($("senderAccountId").value), receiverAccountId: Number($("receiverAccountId").value), amount: Number($("transferAmount").value) })
+            }));
+            if (result.response.ok) {
+                alert("Transfer başarıyla tamamlandı.");
+                $("transferForm").reset();
+                await Promise.all([loadAccounts(), loadDashboard()]);
+            }
+        }
+        async function createDeposit(event) {
+            event.preventDefault();
+            const result = await readResponse(await fetch("/api/v1/deposit-requests", {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({ accountId: Number($("depositAccountId").value), amount: Number($("depositAmount").value) })
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                $("depositForm").reset();
+                loadDepositRequests();
+                loadDashboard();
+            }
+        }
+        async function loadDepositRequests() {
+            if (!requireLogin()) return;
+            const result = await readResponse(await fetch("/api/v1/deposit-requests", { headers: authHeaders() }));
+            if (!result.response.ok) return;
+            if (isAdmin()) {
+                $("adminDepositRequestList").innerHTML = result.data.length
+                    ? `<table><tr><th>Tarih</th><th>Müşteri</th><th>Hesap</th><th>Tutar</th><th>Para birimi</th><th>Durum</th><th>İşlem</th></tr>${result.data.map(request => `<tr><td>${formatDate(request.createdAt)}</td><td>${request.customerName}</td><td>${request.accountNumber}</td><td>${formatMoney(request.amount)}</td><td>TL</td><td><span class="status-pill">${statusText(request.status)}</span></td><td>${request.status === "Pending" ? `<button onclick="approveDeposit(${request.id})">Onayla</button><button onclick="rejectDeposit(${request.id})">Reddet</button>` : "-"}</td></tr>`).join("")}</table>`
+                    : "<p>Para yatırma talebi bulunmuyor.</p>";
+            } else {
+                $("depositRequestList").innerHTML = result.data.length
+                    ? `<table><tr><th>Tarih</th><th>Tutar</th><th>Para birimi</th><th>Durum</th></tr>${result.data.map(request => `<tr><td>${formatDate(request.createdAt)}</td><td>${formatMoney(request.amount)}</td><td>TL</td><td><span class="status-pill">${statusText(request.status)}</span></td></tr>`).join("")}</table>`
+                    : "<p>Henüz para yatırma talebin bulunmuyor.</p>";
+            }
+        }
+        async function approveDeposit(id) {
+            const result = await readResponse(await fetch(`/api/v1/deposit-requests/${id}/approve`, { method: "PUT", headers: authHeaders() }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                await Promise.all([loadDepositRequests(), loadAuditLogs(), loadDashboard()]);
+            }
+        }
+        async function rejectDeposit(id) {
+            const result = await readResponse(await fetch(`/api/v1/deposit-requests/${id}/reject`, { method: "PUT", headers: authHeaders() }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                await Promise.all([loadDepositRequests(), loadAuditLogs(), loadDashboard()]);
+            }
+        }
+        async function loadUsers() {
+            if (!requireLogin()) return;
+            const result = await readResponse(await fetch("/api/v1/users", { headers: authHeaders() }));
+            if (!result.response.ok) return;
+            adminUserData = result.data;
+            renderAdminUsers();
+            const pendingUsers = result.data.filter(user => !user.isApproved);
+            $("pendingUsersList").innerHTML = pendingUsers.length
+                ? `<table><tr><th>Kullanıcı</th><th>E-posta</th><th>Telefon</th><th>İşlem</th></tr>${pendingUsers.map(user => `<tr><td>${user.userName}</td><td>${user.email || "Belirtilmemiş"}</td><td>${user.phone || "Belirtilmemiş"}</td><td><button onclick="approveUser(${user.id})">Onayla</button><button onclick="rejectUser(${user.id})">Reddet</button></td></tr>`).join('')}</table>`
+                : `<p class="approval-empty">Onay bekleyen kullanıcı bulunmuyor.</p>`;
+        }
+        function renderAdminUsers() {
+            const search = $("userSearchInput").value.trim().toLocaleLowerCase("tr-TR");
+            const users = adminUserData.filter(user =>
+                !search || `${user.userName} ${user.email || ""} ${user.phone || ""}`
+                    .toLocaleLowerCase("tr-TR").includes(search));
+            $("userList").innerHTML = users.length
+                ? `<table><tr><th>ID</th><th>Kullanıcı</th><th>E-posta</th><th>Telefon</th><th>Rol</th><th>Durum</th><th>Müşteri ID</th><th>İşlem</th></tr>${users.map(u => `
+                    <tr><td>${u.id}</td><td>${u.userName}</td><td>${u.email || "Belirtilmemiş"}</td><td>${u.phone || "Belirtilmemiş"}</td><td>${u.role}</td><td>${u.isApproved ? "Onaylandı" : "Onay bekliyor"} · ${u.isActive ? "Aktif" : "Pasif"}</td><td>${u.customerId || "Bağlı değil"}</td>
+                    <td><input id="customerForUser${u.id}" type="number" placeholder="Müşteri ID"><button onclick="assignCustomer(${u.id})">Bağla</button><button onclick="unassignCustomer(${u.id})">Bağı kaldır</button><button onclick="toggleUserStatus(${u.id}, ${u.isActive})">${u.isActive ? "Pasifleştir" : "Aktifleştir"}</button><button onclick="deleteUser(${u.id}, ${u.isApproved})">Sil</button></td></tr>`).join("")}</table>`
+                : "<p>Kullanıcı bulunamadı.</p>";
+        }
+        async function toggleUserStatus(userId, isActive) {
+            const action = isActive ? "pasifleştir" : "aktifleştir";
+            if (!confirm(`Bu kullanıcı ${action}ilsin mi?`)) return;
+            const result = await readResponse(await fetch(`/api/v1/users/${userId}/status`, {
+                method: "PUT", headers: authHeaders(true), body: JSON.stringify({ isActive: !isActive })
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                await Promise.all([loadUsers(), loadAdminDashboard()]);
+            }
+        }
+        async function loadAuditLogs() {
+            if (!requireLogin() || !isAdmin()) return;
+            const params = new URLSearchParams();
+            const search = $("auditSearchInput").value.trim();
+            const action = $("auditActionFilter").value;
+            const from = $("auditFromDate").value;
+            const to = $("auditToDate").value;
+            if (search) params.set("search", search);
+            if (action) params.set("action", action);
+            if (from) params.set("from", from);
+            if (to) params.set("to", to);
+            const result = await readResponse(await fetch(`/api/v1/audit-logs?${params.toString()}`, { headers: authHeaders() }));
+            if (!result.response.ok) return;
+            const actionOptions = [...new Set(result.data.map(log => log.action))].sort();
+            const selectedAction = $("auditActionFilter").value;
+            $("auditActionFilter").innerHTML = `<option value="">Tüm işlem türleri</option>${actionOptions.map(value => `<option value="${value}">${value}</option>`).join("")}`;
+            if (actionOptions.includes(selectedAction)) $("auditActionFilter").value = selectedAction;
+            $("auditLogList").innerHTML = result.data.length
+                ? `<table><tr><th>Tarih</th><th>Kullanıcı</th><th>İşlem</th><th>Açıklama</th></tr>${result.data.map(log => `<tr><td>${formatDate(log.createdAt)}</td><td>${log.actorUserName}</td><td><span class="status-pill">${log.action}</span></td><td>${log.description}</td></tr>`).join("")}</table>`
+                : "<p>Henüz işlem kaydı bulunmuyor.</p>";
+        }
+        function renderSecurityUsers(users = adminUserData) {
+            $("securityList").innerHTML = users.length
+                ? `<table><tr><th>Kullanıcı</th><th>Durum</th><th>Son giriş</th><th>Başarısız giriş</th></tr>${users.map(user => `<tr><td>${user.userName}</td><td>${user.isActive ? "Aktif" : "Pasif"}</td><td>${user.lastLoginAt ? formatDate(user.lastLoginAt) : "Henüz giriş yok"}</td><td>${user.failedLoginCount || 0}</td></tr>`).join("")}</table>`
+                : "<p>Güvenlik bilgisi bulunmuyor.</p>";
+        }
+        function exportAuditLogs() {
+            if (!adminAuditData.length) {
+                alert("Dışa aktarılacak işlem kaydı bulunmuyor.");
+                return;
+            }
+            const escapeCsv = value => `"${String(value ?? "").replaceAll('"', '""')}"`;
+            const rows = [
+                ["Tarih", "Kullanıcı", "İşlem", "Açıklama"],
+                ...adminAuditData.map(log => [formatDate(log.createdAt), log.actorUserName, log.action, log.description])
+            ];
+            const csv = "\ufeff" + rows.map(row => row.map(escapeCsv).join(";")).join("\n");
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `islem-gecmisi-${todayInIstanbul()}.csv`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+        async function approveUser(userId) {
+            const result = await readResponse(await fetch(`/api/v1/users/${userId}/approve`, {
+                method: "PUT", headers: authHeaders()
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                loadUsers();
+                loadCustomers();
+            }
+        }
+        async function approveAllUsers() {
+            if (!confirm("Tüm bekleyen kullanıcılar onaylansın mı?")) return;
+            const result = await readResponse(await fetch("/api/v1/users/approve-all-pending", {
+                method: "POST", headers: authHeaders()
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                loadUsers();
+                loadCustomers();
+            }
+        }
+        async function rejectUser(userId) {
+            if (!confirm("Bu kullanıcı başvurusu reddedilsin mi?")) return;
+            const result = await readResponse(await fetch(`/api/v1/users/${userId}/reject`, {
+                method: "DELETE", headers: authHeaders()
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                loadUsers();
+            }
+        }
+        async function deleteUser(userId, isApproved) {
+            const message = isApproved
+                ? "Bu kullanıcı, müşterisi ve bağlı hesap/transfer kayıtları silinebilir. Devam edilsin mi?"
+                : "Bu kullanıcı silinsin mi?";
+            if (!confirm(message)) return;
+            const result = await readResponse(await fetch(`/api/v1/users/${userId}`, {
+                method: "DELETE", headers: authHeaders()
+            }));
+            if (result.response.ok) {
+                alert(result.data.message);
+                loadUsers();
+                loadCustomers();
+            }
+        }
+        async function assignCustomer(userId) {
+            const customerId = Number($(`customerForUser${userId}`).value);
+            if (!customerId) { alert("Müşteri ID girilmelidir."); return; }
+            const result = await readResponse(await fetch(`/api/v1/users/${userId}/customer`, {
+                method: "PUT", headers: authHeaders(true), body: JSON.stringify({ customerId })
+            }));
+            if (result.response.ok) { alert("Kullanıcı müşteriye bağlandı."); loadUsers(); }
+        }
+        async function unassignCustomer(userId) {
+            const result = await readResponse(await fetch(`/api/v1/users/${userId}/customer`, {
+                method: "PUT", headers: authHeaders(true), body: JSON.stringify({ customerId: null })
+            }));
+            if (result.response.ok) { alert("Müşteri bağlantısı kaldırıldı."); loadUsers(); }
+        }
+        async function loadCustomers() {
+            if (!requireLogin()) return;
+            const result = await readResponse(await fetch("/api/v1/customers", { headers: authHeaders() }));
+            if (result.response.ok) {
+                customerData = result.data;
+                filteredCustomerData = customerData;
+                customerPage = 1;
+                renderCustomerPage();
+            }
+        }
+        function renderCustomerPage() {
+            document.querySelectorAll(".pagination").forEach(element => element.remove());
+            const totalPages = Math.max(1, Math.ceil(filteredCustomerData.length / customerPageSize));
+            customerPage = Math.min(Math.max(customerPage, 1), totalPages);
+            const start = (customerPage - 1) * customerPageSize;
+            const pageItems = filteredCustomerData.slice(start, start + customerPageSize);
+
+            $("customerList").innerHTML = pageItems.map(c => `
+                <li>
+                    ${c.id} - ${c.fullName} - ${c.email} - ${c.phone}
+                    ${isAdmin() ? `<button onclick="editCustomer(${c.id})">Güncelle</button>
+                    <button onclick="deleteCustomer(${c.id})">Sil</button>` : ""}
+                </li>`).join('') || "Müşteri bulunamadı.";
+
+            $("customerList").insertAdjacentHTML("afterend", `<div class="pagination">${Array.from({ length: totalPages }, (_, index) => {
+                const page = index + 1;
+                return `<button class="${page === customerPage ? "active" : ""}" onclick="changeCustomerPage(${page})">${page}</button>`;
+            }).join('')}</div>`);
+        }
+        function changeCustomerPage(page) {
+            customerPage = page;
+            renderCustomerPage();
+        }
+        async function searchCustomers(event) {
+            event.preventDefault();
+            if (!customerData.length) {
+                const result = await readResponse(await fetch("/api/v1/customers", { headers: authHeaders() }));
+                if (!result.response.ok) return;
+                customerData = result.data;
+            }
+            const query = $("customerSearchInput").value.toLowerCase().trim();
+            filteredCustomerData = customerData.filter(customer =>
+                `${customer.fullName} ${customer.email} ${customer.phone}`.toLowerCase().includes(query));
+            customerPage = 1;
+            renderCustomerPage();
+        }
+        async function editCustomer(id) {
+            const result = await readResponse(await fetch(`/api/v1/customers/${id}`, { headers: authHeaders() }));
+            if (!result.response.ok) return;
+            $("customerId").value = result.data.id;
+            $("fullName").value = result.data.fullName;
+            $("email").value = result.data.email;
+            $("phone").value = result.data.phone;
+            $("customerSaveButton").textContent = "Müşteriyi Güncelle";
+            $("customerCancelButton").hidden = false;
+        }
+        async function deleteCustomer(id) {
+            if (!confirm("Bu müşteri silinsin mi?")) return;
+            const result = await readResponse(await fetch(`/api/v1/customers/${id}`, {
+                method: "DELETE", headers: authHeaders()
+            }));
+            if (result.response.ok) loadCustomers();
+        }
+        async function saveCustomer(event) {
+            event.preventDefault();
+            const id = $("customerId").value;
+            const result = await readResponse(await fetch(
+                id ? `/api/v1/customers/${id}` : "/api/v1/customers",
+                {
+                    method: id ? "PUT" : "POST",
+                    headers: authHeaders(true),
+                    body: JSON.stringify({
+                        fullName: $("fullName").value,
+                        email: $("email").value,
+                        phone: $("phone").value
+                    })
+                }
+            ));
+            if (result.response.ok) {
+                $("customerForm").reset();
+                $("customerId").value = "";
+                $("customerSaveButton").textContent = "Müşteri Ekle";
+                $("customerCancelButton").hidden = true;
+                loadCustomers();
+            }
+        }
+        async function importCustomers(event) {
+            event.preventDefault();
+            const file = $("customerExcelFile").files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+            const result = await readResponse(await fetch("/api/v1/customers/import", {
+                method: "POST",
+                headers: authHeaders(),
+                body: formData
+            }));
+
+            if (result.response.ok) {
+                const duplicateText = result.data.duplicates?.length
+                    ? `\n\nZaten mevcut kayıtlar:\n${result.data.duplicates.join("\n")}`
+                    : "";
+                alert(`${result.data.message}\nAtlanan kayıt: ${result.data.skipped}${duplicateText}`);
+                $("customerImportForm").reset();
+                loadCustomers();
+            }
+        }
+        $("loginForm").addEventListener("submit", login);
+        $("appResponseClose").addEventListener("click", () => {
+            clearTimeout(responseTimer);
+            $("appResponse").hidden = true;
+        });
+        $("welcomeClose").addEventListener("click", () => {
+            clearTimeout(welcomeTimer);
+            $("welcomeOverlay").hidden = true;
+        });
+        function selectLoginType(type, title) {
+            selectedLoginType = type;
+            $("loginChoicePanel").hidden = true;
+            $("loginChoiceTitle").hidden = true;
+            $("loginForm").hidden = false;
+            $("forgotPasswordSection").hidden = false;
+            $("loginModeTitle").textContent = title;
+            $("loginUserName").focus();
+        }
+        $("chooseUserLogin").addEventListener("click", () => selectLoginType("User", "Kullanıcı Girişi"));
+        $("chooseAdminLogin").addEventListener("click", () => selectLoginType("Admin", "Yönetici Girişi"));
+        $("backToLoginChoice").addEventListener("click", () => {
+            selectedLoginType = null;
+            $("loginForm").reset();
+            $("loginForm").hidden = true;
+            $("loginChoicePanel").hidden = false;
+            $("loginChoiceTitle").hidden = false;
+            $("forgotPasswordSection").hidden = true;
+        });
+        $("forgotForm").addEventListener("submit", forgotPassword);
+        $("resetForm").addEventListener("submit", resetPassword);
+        $("registerForm").addEventListener("submit", register);
+        $("changePasswordForm").addEventListener("submit", changePassword);
+        $("profileInfoForm").addEventListener("submit", updateProfile);
+        $("budgetEntryForm").addEventListener("submit", createBudgetEntry);
+        $("statementImportForm").addEventListener("submit", importStatement);
+        $("confirmStatementButton").addEventListener("click", confirmStatementImport);
+        $("cancelStatementButton").addEventListener("click", cancelStatementImport);
+        $("budgetEntryType").addEventListener("change", populateBudgetCategorySelects);
+        $("personalRuleType").addEventListener("change", populatePersonalRuleCategories);
+        $("personalRuleForm").addEventListener("submit", savePersonalRule);
+        $("refreshPersonalRulesButton").addEventListener("click", loadMerchantRules);
+        $("budgetEntryCancelButton").addEventListener("click", resetBudgetEntryForm);
+        $("refreshBudgetButton").addEventListener("click", loadBudgetEntries);
+        $("goPersonalRulesButton").addEventListener("click", () => navigateToSection("personalRulesSection"));
+        $("budgetLimitForm").addEventListener("submit", saveBudgetLimit);
+        $("categoryForm").addEventListener("submit", saveBudgetCategory);
+        $("reportMonth").addEventListener("change", async () => {
+            renderBudgetReport();
+            await loadBudgetLimits();
+        });
+        $("approveAllUsersButton").addEventListener("click", approveAllUsers);
+        $("toggleLoginPassword").addEventListener("click", () => {
+            const password = $("loginPassword");
+            const isHidden = password.type === "password";
+            password.type = isHidden ? "text" : "password";
+            $("toggleLoginPassword").textContent = isHidden ? "Gizle" : "Göster";
+        });
+        $("showRegisterButton").addEventListener("click", () => {
+            $("registerPanel").hidden = false;
+            $("loginForm").style.display = "none";
+            $("showRegisterButton").parentElement.hidden = true;
+            $("registerUserName").focus();
+        });
+        $("showLoginButton").addEventListener("click", () => {
+            $("registerPanel").hidden = true;
+            $("loginForm").style.display = "flex";
+            $("showRegisterButton").parentElement.hidden = false;
+            $("loginUserName").focus();
+        });
+        $("accountForm").addEventListener("submit", createAccount);
+        $("depositForm").addEventListener("submit", createDeposit);
+        $("loadDepositRequestsButton").addEventListener("click", loadDepositRequests);
+        $("transferForm").addEventListener("submit", createTransfer);
+        $("customerForm").addEventListener("submit", saveCustomer);
+        $("customerImportForm").addEventListener("submit", importCustomers);
+        $("customerSearchForm").addEventListener("submit", searchCustomers);
+        $("customerSearchInput").addEventListener("input", searchCustomers);
+        $("clearCustomerSearchButton").addEventListener("click", () => {
+            $("customerSearchInput").value = "";
+            filteredCustomerData = customerData;
+            customerPage = 1;
+            renderCustomerPage();
+        });
+        $("customerCancelButton").addEventListener("click", () => {
+            $("customerForm").reset();
+            $("customerId").value = "";
+            $("customerSaveButton").textContent = "Müşteri Ekle";
+            $("customerCancelButton").hidden = true;
+        });
+        $("loadAccountsButton").addEventListener("click", loadAccounts);
+        $("refreshDashboardButton").addEventListener("click", loadDashboard);
+        $("refreshAdminDashboardButton").addEventListener("click", loadAdminDashboard);
+        $("goBudgetButton").addEventListener("click", () => navigateToSection("budgetSection"));
+        $("goBudgetEntryButton").addEventListener("click", () => {
+            navigateToSection("budgetSection");
+            $("budgetEntryType").focus();
+        });
+        $("goProfileButton").addEventListener("click", () => navigateToSection("profileSection"));
+        $("loadCustomersButton").addEventListener("click", loadCustomers);
+        $("loadUsersButton").addEventListener("click", loadUsers);
+        $("userSearchForm").addEventListener("submit", event => {
+            event.preventDefault();
+            renderAdminUsers();
+        });
+        $("userSearchInput").addEventListener("input", renderAdminUsers);
+        $("clearUserSearchButton").addEventListener("click", () => {
+            $("userSearchInput").value = "";
+            renderAdminUsers();
+        });
+        $("loadAuditLogsButton").addEventListener("click", loadAuditLogs);
+        $("exportAuditButton").addEventListener("click", exportAuditLogs);
+        $("refreshSecurityButton").addEventListener("click", async () => {
+            await loadUsers();
+            renderSecurityUsers();
+        });
+        $("auditFilterForm").addEventListener("submit", event => {
+            event.preventDefault();
+            loadAuditLogs();
+        });
+        $("clearAuditFilterButton").addEventListener("click", () => {
+            $("auditFilterForm").reset();
+            loadAuditLogs();
+        });
+        $("logoutTopButton").addEventListener("click", () => {
+            if (token()) {
+                localStorage.removeItem("token");
+                location.reload();
+                return;
+            }
+
+            $("authSection").scrollIntoView({ behavior: "smooth" });
+            $("loginUserName").focus();
+        });
+        function navigateToSection(targetId) {
+            const target = $(targetId);
+            if (!target) return;
+            activeSectionId = targetId;
+            document.querySelectorAll(".app-content").forEach(element => {
+                element.classList.toggle("section-active", element.id === targetId);
+                element.style.display = element.classList.contains("intro") || element.id === targetId ? "block" : "none";
+            });
+            document.querySelectorAll(".sidebar button[data-target]").forEach(item => {
+                item.classList.toggle("active", item.dataset.target === targetId);
+            });
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+        $("profileTopButton").addEventListener("click", () => navigateToSection("profileSection"));
+        document.querySelectorAll(".sidebar button[data-target]").forEach(button => {
+            button.addEventListener("click", () => {
+                navigateToSection(button.dataset.target);
+            });
+        });
+        updateSession();
     </script>
 </body>
 </html>

@@ -1,0 +1,11 @@
+bin/
+obj/
+.git/
+.vs/
+.vscode/
+*.user
+*.suo
+bankapi.db-shm
+bankapi.db-wal
+Dockerfile*
+docker-compose*.yml
