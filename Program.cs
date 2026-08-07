@@ -1,4 +1,5 @@
 using System.Text;
+using System.Security.Cryptography;
 using BankApi.Data;
 using BankApi.Models;
 using BankApi.Services;
@@ -204,6 +205,82 @@ using (var scope = app.Services.CreateScope())
         when (exception.SqliteErrorCode == 1)
     {
         // Sütun mevcutsa başlangıç işlemi tekrar çalıştırılabilir.
+    }
+
+    // Temiz bir kurulumda yöneticinin ve kullanıcı ekranının hemen
+    // denenebilmesi için örnek hesapları yalnızca yoksa oluştur.
+    static string CreateSeedPasswordHash(string password)
+    {
+        var salt = RandomNumberGenerator.GetBytes(16);
+        var hash = Rfc2898DeriveBytes.Pbkdf2(
+            password,
+            salt,
+            100_000,
+            HashAlgorithmName.SHA256,
+            32);
+
+        return $"{Convert.ToBase64String(salt)}.{Convert.ToBase64String(hash)}";
+    }
+
+    static string CreateSeedPassword()
+    {
+        var bytes = RandomNumberGenerator.GetBytes(12);
+        var value = Convert.ToBase64String(bytes)
+            .Replace("+", "-")
+            .Replace("/", "_")
+            .TrimEnd('=');
+        return $"Demo-{value}!";
+    }
+
+    var seedUsers = new[]
+    {
+        new
+        {
+            UserName = "meryem",
+            Email = "meryem@demo.local",
+            Phone = "5550000001",
+            Role = "Admin"
+        },
+        new
+        {
+            UserName = "demo.kullanici",
+            Email = "demo@demo.local",
+            Phone = "5550000002",
+            Role = "User"
+        }
+    };
+
+    var createdSeedCredentials = new List<(string UserName, string Password)>();
+    foreach (var seed in seedUsers)
+    {
+        if (!db.Users.Any(user => user.UserName == seed.UserName))
+        {
+            var passwordSetting = seed.Role == "Admin"
+                ? builder.Configuration["Seed:AdminPassword"]
+                : builder.Configuration["Seed:DemoPassword"];
+            var password = string.IsNullOrWhiteSpace(passwordSetting)
+                ? CreateSeedPassword()
+                : passwordSetting;
+
+            db.Users.Add(new User
+            {
+                UserName = seed.UserName,
+                Email = seed.Email,
+                Phone = seed.Phone,
+                PasswordHash = CreateSeedPasswordHash(password),
+                Role = seed.Role,
+                IsApproved = true,
+                IsActive = true
+            });
+
+            createdSeedCredentials.Add((seed.UserName, password));
+        }
+    }
+
+    db.SaveChanges();
+    foreach (var (userName, password) in createdSeedCredentials)
+    {
+        Console.WriteLine($"Seed kullanıcı oluşturuldu - Kullanıcı: {userName}, Şifre: {password}");
     }
 
     try
