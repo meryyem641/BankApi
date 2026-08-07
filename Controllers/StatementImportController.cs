@@ -674,33 +674,33 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
     private static string GuessCategory(string description, BudgetEntryType type)
     {
         var text = HeaderKey(description);
-        if (text.Contains("altin") || text.Contains("doviz") || text.Contains("kuyumcu")) return "Yatırım / Varlıklarım";
+        if (HasAny(text, "altin", "gramaltin", "ceyrekaltin", "cumhuriyetaltini", "doviz", "euro", "usd", "dolar", "sterlin", "kuyumcu", "hisse", "borsa", "yatirimfonu", "menkul", "repo", "vadeli", "kripto", "bitcoin", "ethereum", "coin")) return "Yatırım / Varlıklarım";
         if (type == BudgetEntryType.Income)
         {
-            if (text.Contains("maas") || text.Contains("maasodeme") || text.Contains("maasgelir")) return "Maaş";
-            if (text.Contains("harclik")) return "Harçlık";
-            if (text.Contains("parayatirma") || text.Contains("nakityatirma")) return "Para Yatırma";
-            if (text.Contains("gelenfast") || text.Contains("paratransferi") || text.Contains("paragonder")) return "Para Transferi";
+            if (HasAny(text, "maas", "maasodeme", "maasgelir", "salary", "ucretodemesi", "avans", "prim", "ikramiye", "emekliayligi", "sgk")) return "Maaş";
+            if (HasAny(text, "harclik", "cep harcligi", "cep harclik")) return "Harçlık";
+            if (HasAny(text, "parayatirma", "nakityatirma", "hesabayatirma")) return "Para Yatırma";
+            if (HasAny(text, "gelenfast", "gelenhavale", "geleneft", "paratransferi", "paragonder", "havalealacak")) return "Para Transferi";
             return "Ek gelir";
         }
 
-        if (text.Contains("nakitcek") || text.Contains("paracek") || text.Contains("atmnakitcek")) return "Para Çekme";
-        if (text.Contains("gidenfast") || text.Contains("gidenhavale") || text.Contains("paratransferi")) return "Para Transferi";
-        if (text.Contains("market") || text.Contains("bim") || text.Contains("a101") || text.Contains("migros") || text.Contains("carrefour") || text.Contains("sok")) return "Market";
-        if (text.Contains("kafe") || text.Contains("cafe") || text.Contains("restoran") || text.Contains("lokanta") || text.Contains("yemek") || text.Contains("kahve") || text.Contains("pizza") || text.Contains("burger") || text.Contains("dondurma")) return "Yemek / Kafe";
-        if (text.Contains("trendyol") || text.Contains("hepsiburada") || text.Contains("amazon") || text.Contains("alisveris") || text.Contains("eticaret") || text.Contains("online") || text.Contains("siparis")) return "Alışveriş";
-        if (text.Contains("giyim") || text.Contains("kiyafet") || text.Contains("ayakkabi") || text.Contains("zara") || text.Contains("moda") || text.Contains("magaza")) return "Giyim";
-        if (text.Contains("spor") || text.Contains("fitness") || text.Contains("gym") || text.Contains("pilates") || text.Contains("yoga") || text.Contains("yuzme") || text.Contains("futbol") || text.Contains("basketbol") || text.Contains("tenis") || text.Contains("halisaha") || text.Contains("decathlon")) return "Spor";
-        if (text.Contains("fatura") || text.Contains("elektrik") || text.Contains("su") || text.Contains("dogalgaz") || text.Contains("internet") || text.Contains("telefon") || text.Contains("avea") || text.Contains("turkcell") || text.Contains("vodafone")) return "Fatura";
-        if (text.Contains("kira")) return "Kira";
-        if (text.Contains("metro") || text.Contains("otobus") || text.Contains("taksi") || text.Contains("akaryakit") || text.Contains("petrol") || text.Contains("petrolgaz") || text.Contains("benzin") || text.Contains("motorin") || text.Contains("dizel") || text.Contains("lpg") || text.Contains("shell") || text.Contains("istasyon") || text.Contains("gaz" ) || text.Contains("ispark") || text.Contains("otopark") || text.Contains("uber")) return "Ulaşım";
-        if (text.Contains("abonelik") || text.Contains("netflix") || text.Contains("spotify") || text.Contains("youtube") || text.Contains("dijital") || text.Contains("apple")) return "Abonelik";
-        if (text.Contains("saglik") || text.Contains("eczane") || text.Contains("hastane") || text.Contains("doktor") || text.Contains("klinik")) return "Sağlık";
-        if (text.Contains("kitap") || text.Contains("kurs") || text.Contains("egitim") || text.Contains("egitimodeme") || text.Contains("okul") || text.Contains("universite")) return "Eğitim";
-        if (text.Contains("elektronik") || text.Contains("teknoloji") || text.Contains("bilgisayar") || text.Contains("telefon")) return "Teknoloji";
-        if (text.Contains("ev") || text.Contains("mobilya") || text.Contains("dekorasyon") || text.Contains("emlak")) return "Ev";
-        if (text.Contains("vergi") || text.Contains("resmi") || text.Contains("harc")) return "Vergi / Resmi";
-        if (text.Contains("ucreti") || text.Contains("komisyon") || text.Contains("bsmv")) return "Komisyon / Ücret";
+        if (HasAny(text, "nakitcek", "paracek", "atmnakitcek", "hesaptancekim")) return "Para Çekme";
+        if (HasAny(text, "gidenfast", "gidenhavale", "gideneft", "paratransferi", "havale", "eft")) return "Para Transferi";
+        if (HasAny(text, "market", "bim", "a101", "migros", "carrefour", "carrefoursa", "sok", "sokmarket", "macrocenter", "filemarket", "hakmar", "onurmarket", "bizimtop", "metromarket", "seçmarket")) return "Market";
+        if (HasAny(text, "kafe", "cafe", "restoran", "restaurant", "lokanta", "yemek", "kahve", "pizza", "burger", "dondurma", "mcdonalds", "burgerking", "kfc", "dominos", "getir", "yemeksepeti", "starbucks", "kahvedunyasi", "bigchefs", "simit", "pastane", "firin", "kasap", "balik", "cigkofte")) return "Yemek / Kafe";
+        if (HasAny(text, "trendyol", "hepsiburada", "amazon", "alisveris", "eticaret", "online", "siparis", "n11", "sahibinden", "dolap", "etsy", "shopier", "lcwaikiki")) return "Alışveriş";
+        if (HasAny(text, "giyim", "kiyafet", "ayakkabi", "zara", "koton", "mavi", "defacto", "boyner", "hm", "hummel", "nike", "adidas", "puma", "stradivarius", "pullandbear", "bershka", "gap")) return "Giyim";
+        if (HasAny(text, "spor", "fitness", "gym", "pilates", "yoga", "yuzme", "futbol", "basketbol", "tenis", "halisaha", "decathlon", "macfit", "spor salonu", "formasalonu", "voleybol", "kayak", "kosu")) return "Spor";
+        if (HasAny(text, "fatura", "elektrik", "elektrikdagitim", "su", "dogalgaz", "internet", "telefon", "gsm", "avea", "turkcell", "vodafone", "turktelekom", "superonline", "digiturk", "dsmart")) return "Fatura";
+        if (HasAny(text, "kira", "kirasi", "konutkirasi", "isyeri kirasi")) return "Kira";
+        if (HasAny(text, "metro", "otobus", "otocar", "taksi", "akaryakit", "petrol", "petrolgaz", "benzin", "motorin", "dizel", "lpg", "shell", "opet", "bp", "total", "goodyear", "lastik", "servis", "oto", "istanbulkart", "ankarakart", "istanbululasim", "istasyon", "gaz", "ispark", "otopark", "uber", "bitaksi", "marti", "scooter")) return "Ulaşım";
+        if (HasAny(text, "abonelik", "netflix", "spotify", "youtube", "dijital", "apple", "primevideo", "disney", "blutv", "exxen", "gamepass", "icloud", "googleone", "uyelik")) return "Abonelik";
+        if (HasAny(text, "saglik", "eczane", "hastane", "doktor", "klinik", "medikal", "dishekimi", "disci", "optik", "lens", "veteriner", "laboratuvar", "checkup", "ilac", "muayene")) return "Sağlık";
+        if (HasAny(text, "kitap", "kurs", "egitim", "egitimodeme", "okul", "universite", "kolej", "dershane", "etut", "sinav", "yks", "lise", "ilkokul", "yukseklisans", "dilkursu", "udemy", "coursera", "sertifika", "kirtasiye")) return "Eğitim";
+        if (HasAny(text, "elektronik", "teknoloji", "bilgisayar", "telefon", "vatan", "teknosa", "mediamarkt", "samsung", "huawei", "lenovo", "asus", "playstation", "xbox", "steam", "epicgames", "yazilim", "hosting", "domain")) return "Teknoloji";
+        if (HasAny(text, "ev", "mobilya", "dekorasyon", "emlak", "ikea", "koctas", "bauhaus", "englishhome", "madamecoco", "zucaciye", "beyazesya", "klima", "tesisat", "temizlik", "perde", "halı", "hali")) return "Ev";
+        if (HasAny(text, "vergi", "resmi", "harc", "noter", "mahkeme", "belediye", "trafikcezasi", "pasaport", "ehliyet", "tapu", "sgkprim")) return "Vergi / Resmi";
+        if (HasAny(text, "ucreti", "komisyon", "bsmv", "masraf", "hizmetbedeli", "kartaidati", "hesapisletim", "poskomisyon")) return "Komisyon / Ücret";
         return "Diğer";
     }
 
