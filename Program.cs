@@ -374,7 +374,7 @@ using (var scope = app.Services.CreateScope())
         ("Alışveriş", BudgetEntryType.Expense), ("Yemek / Kafe", BudgetEntryType.Expense),
         ("Ulaşım", BudgetEntryType.Expense), ("Giyim", BudgetEntryType.Expense), ("Abonelik", BudgetEntryType.Expense),
         ("Para Çekme", BudgetEntryType.Expense), ("Para Transferi", BudgetEntryType.Expense),
-        ("Sağlık", BudgetEntryType.Expense), ("Eğitim", BudgetEntryType.Expense), ("Teknoloji", BudgetEntryType.Expense),
+        ("Sağlık", BudgetEntryType.Expense), ("Eğitim", BudgetEntryType.Expense), ("Teknoloji", BudgetEntryType.Expense), ("Spor", BudgetEntryType.Expense),
         ("Ev", BudgetEntryType.Expense), ("Vergi / Resmi", BudgetEntryType.Expense), ("Komisyon / Ücret", BudgetEntryType.Expense),
         ("Diğer", BudgetEntryType.Expense)
     };
