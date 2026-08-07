@@ -203,7 +203,7 @@ public class AuthController(
             Email = email,
             Phone = phone,
             PasswordHash = passwordHash,
-            IsApproved = false
+            IsApproved = true
         };
 
         db.Users.Add(user);
@@ -211,7 +211,7 @@ public class AuthController(
 
         return Created("", new
         {
-            message = "Kaydınız alındı. Bilgileriniz admin tarafından kontrol ediliyor. Onaylandıktan sonra hesabınıza erişebilirsiniz.",
+            message = "Kayıt tamamlandı. Hesabınız aktif; kullanıcı adınız ve şifrenizle hemen giriş yapabilirsiniz.",
             user.UserName
         });
     }
