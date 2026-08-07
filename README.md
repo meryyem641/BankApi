@@ -114,6 +114,3 @@ BankApi/
 ## Güvenlik Notu
 
 Geliştirme ortamındaki JWT anahtarı örnek bir değerdir. Gerçek kullanımda `Jwt:Key` değeri ortam değişkeni veya güvenli bir secret yönetim sistemi üzerinden verilmelidir.
-
-B
-
