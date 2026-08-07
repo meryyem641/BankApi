@@ -674,35 +674,63 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
     private static string GuessCategory(string description, BudgetEntryType type)
     {
         var text = HeaderKey(description);
-        if (HasAny(text, "altin", "gramaltin", "ceyrekaltin", "cumhuriyetaltini", "doviz", "euro", "usd", "dolar", "sterlin", "kuyumcu", "hisse", "borsa", "yatirimfonu", "menkul", "repo", "vadeli", "kripto", "bitcoin", "ethereum", "coin")) return "Yatırım / Varlıklarım";
+        var investment = BestCategory(text,
+            ("Yatırım / Varlıklarım", new[] { "altin", "gramaltin", "ceyrekaltin", "cumhuriyetaltini", "doviz", "euro", "usd", "dolar", "sterlin", "kuyumcu", "hisse", "borsa", "yatirimfonu", "menkul", "repo", "vadeli", "kripto", "bitcoin", "ethereum", "coin" }));
+        if (investment is not "Diğer") return investment;
+
         if (type == BudgetEntryType.Income)
         {
-            if (HasAny(text, "maas", "maasodeme", "maasgelir", "salary", "ucretodemesi", "avans", "prim", "ikramiye", "emekliayligi", "sgk")) return "Maaş";
-            if (HasAny(text, "harclik", "cep harcligi", "cep harclik")) return "Harçlık";
-            if (HasAny(text, "parayatirma", "nakityatirma", "hesabayatirma")) return "Para Yatırma";
-            if (HasAny(text, "gelenfast", "gelenhavale", "geleneft", "paratransferi", "paragonder", "havalealacak")) return "Para Transferi";
-            return "Ek gelir";
+            return BestCategory(text,
+                ("Maaş", new[] { "maas", "maasodeme", "maasgelir", "salary", "ucretodemesi", "avans", "prim", "ikramiye", "emekliayligi", "sgk" }),
+                ("Harçlık", new[] { "harclik", "cep harcligi", "cep harclik" }),
+                ("Para Yatırma", new[] { "parayatirma", "nakityatirma", "hesabayatirma" }),
+                ("Para Transferi", new[] { "gelenfast", "gelenhavale", "geleneft", "paratransferi", "paragonder", "havalealacak" })) is var incomeCategory and not "Diğer"
+                ? incomeCategory
+                : "Ek gelir";
         }
 
-        if (HasAny(text, "nakitcek", "paracek", "atmnakitcek", "hesaptancekim")) return "Para Çekme";
-        if (HasAny(text, "ucreti", "komisyon", "bsmv", "masraf", "hizmetbedeli", "kartaidati", "hesapisletim", "poskomisyon")) return "Komisyon / Ücret";
-        if (HasAny(text, "gidenfast", "gidenhavale", "gideneft", "paratransferi", "havale", "eft")) return "Para Transferi";
-        if (HasAny(text, "market", "bim", "a101", "migros", "carrefour", "carrefoursa", "sok", "sokmarket", "macrocenter", "filemarket", "hakmar", "onurmarket", "bizimtop", "metromarket", "seçmarket")) return "Market";
-        if (HasAny(text, "kafe", "cafe", "restoran", "restaurant", "lokanta", "yemek", "kahve", "pizza", "burger", "dondurma", "nido", "mcdonalds", "burgerking", "kfc", "dominos", "getir", "yemeksepeti", "starbucks", "kahvedunyasi", "bigchefs", "simit", "pastane", "firin", "kasap", "etvetavuk", "balik", "cigkofte")) return "Yemek / Kafe";
-        if (HasAny(text, "trendyol", "hepsiburada", "amazon", "iyzico", "alisveris", "eticaret", "online", "siparis", "n11", "sahibinden", "dolap", "etsy", "shopier", "lcwaikiki")) return "Alışveriş";
-        if (HasAny(text, "giyim", "kiyafet", "ayakkabi", "zara", "koton", "mavi", "defacto", "boyner", "hm", "hummel", "nike", "adidas", "puma", "stradivarius", "pullandbear", "bershka", "gap")) return "Giyim";
-        if (HasAny(text, "spor", "fitness", "gym", "pilates", "yoga", "yuzme", "futbol", "basketbol", "tenis", "halisaha", "decathlon", "macfit", "spor salonu", "formasalonu", "voleybol", "kayak", "kosu")) return "Spor";
-        if (HasAny(text, "fatura", "elektrik", "elektrikdagitim", "su", "dogalgaz", "internet", "telefon", "gsm", "avea", "turkcell", "vodafone", "turktelekom", "superonline", "digiturk", "dsmart")) return "Fatura";
-        if (HasAny(text, "kira", "kirasi", "konutkirasi", "isyeri kirasi")) return "Kira";
-        if (HasAny(text, "metro", "otobus", "otocar", "taksi", "akaryakit", "petrol", "petrolgaz", "aytemiz", "petrolc", "benzin", "motorin", "dizel", "lpg", "shell", "opet", "bp", "total", "goodyear", "lastik", "servis", "oto", "istanbulkart", "ankarakart", "istanbululasim", "istasyon", "gaz", "ispark", "otopark", "uber", "bitaksi", "marti", "scooter")) return "Ulaşım";
-        if (HasAny(text, "abonelik", "netflix", "spotify", "youtube", "dijital", "apple", "primevideo", "disney", "blutv", "exxen", "gamepass", "icloud", "googleone", "uyelik")) return "Abonelik";
-        if (HasAny(text, "saglik", "eczane", "hastane", "doktor", "klinik", "medikal", "dishekimi", "disci", "optik", "lens", "veteriner", "laboratuvar", "checkup", "ilac", "muayene")) return "Sağlık";
-        if (HasAny(text, "kitap", "kitapdunyasi", "kitapyurdu", "kurs", "egitim", "egitimodeme", "okul", "universite", "kolej", "dershane", "etut", "sinav", "yks", "lise", "ilkokul", "yukseklisans", "dilkursu", "udemy", "coursera", "sertifika", "kirtasiye")) return "Eğitim";
-        if (HasAny(text, "elektronik", "teknoloji", "bilgisayar", "telefon", "vatan", "teknosa", "mediamarkt", "samsung", "huawei", "lenovo", "asus", "playstation", "xbox", "steam", "epicgames", "yazilim", "hosting", "domain")) return "Teknoloji";
-        if (HasAny(text, "ev", "mobilya", "dekorasyon", "emlak", "ikea", "koctas", "bauhaus", "englishhome", "madamecoco", "zucaciye", "beyazesya", "klima", "tesisat", "temizlik", "perde", "halı", "hali")) return "Ev";
-        if (HasAny(text, "vergi", "resmi", "harc", "noter", "mahkeme", "belediye", "trafikcezasi", "pasaport", "ehliyet", "tapu", "sgkprim")) return "Vergi / Resmi";
+        var expenseCategory = BestCategory(text,
+            ("Para Çekme", new[] { "nakitcek", "paracek", "atmnakitcek", "hesaptancekim" }),
+            ("Komisyon / Ücret", new[] { "ucreti", "komisyon", "bsmv", "masraf", "hizmetbedeli", "kartaidati", "hesapisletim", "poskomisyon" }),
+            ("Para Transferi", new[] { "gidenfast", "gidenhavale", "gideneft", "paratransferi", "havale", "eft" }),
+            ("Market", new[] { "market", "bim", "a101", "migros", "carrefour", "carrefoursa", "sok", "sokmarket", "macrocenter", "filemarket", "hakmar", "onurmarket", "bizimtop", "metromarket", "secmarket" }),
+            ("Yemek / Kafe", new[] { "kafe", "cafe", "restoran", "restaurant", "lokanta", "yemek", "kahve", "pizza", "burger", "dondurma", "nido", "mcdonalds", "burgerking", "kfc", "dominos", "getir", "yemeksepeti", "starbucks", "kahvedunyasi", "bigchefs", "simit", "pastane", "firin", "kasap", "etvetavuk", "balik", "cigkofte" }),
+            ("Alışveriş", new[] { "trendyol", "hepsiburada", "amazon", "iyzico", "alisveris", "eticaret", "online", "siparis", "n11", "sahibinden", "dolap", "etsy", "shopier", "lcwaikiki" }),
+            ("Giyim", new[] { "giyim", "kiyafet", "ayakkabi", "zara", "koton", "mavi", "defacto", "boyner", "hm", "hummel", "nike", "adidas", "puma", "stradivarius", "pullandbear", "bershka", "gap" }),
+            ("Spor", new[] { "spor", "fitness", "gym", "pilates", "yoga", "yuzme", "futbol", "basketbol", "tenis", "halisaha", "decathlon", "macfit", "spor salonu", "formasalonu", "voleybol", "kayak", "kosu" }),
+            ("Fatura", new[] { "fatura", "elektrik", "elektrikdagitim", "su", "dogalgaz", "internet", "telefon", "gsm", "avea", "turkcell", "vodafone", "turktelekom", "superonline", "digiturk", "dsmart" }),
+            ("Kira", new[] { "kira", "kirasi", "konutkirasi", "isyeri kirasi" }),
+            ("Ulaşım", new[] { "metro", "otobus", "otocar", "taksi", "akaryakit", "petrol", "petrolgaz", "aytemiz", "petrolc", "benzin", "motorin", "dizel", "lpg", "shell", "opet", "bp", "total", "goodyear", "lastik", "servis", "oto", "istanbulkart", "ankarakart", "istanbululasim", "istasyon", "gaz", "ispark", "otopark", "uber", "bitaksi", "marti", "scooter" }),
+            ("Abonelik", new[] { "abonelik", "netflix", "spotify", "youtube", "dijital", "apple", "primevideo", "disney", "blutv", "exxen", "gamepass", "icloud", "googleone", "uyelik" }),
+            ("Sağlık", new[] { "saglik", "eczane", "hastane", "doktor", "klinik", "medikal", "dishekimi", "disci", "optik", "lens", "veteriner", "laboratuvar", "checkup", "ilac", "muayene" }),
+            ("Eğitim", new[] { "kitap", "kitapdunyasi", "kitapyurdu", "kurs", "egitim", "egitimodeme", "okul", "universite", "kolej", "dershane", "etut", "sinav", "yks", "lise", "ilkokul", "yukseklisans", "dilkursu", "udemy", "coursera", "sertifika", "kirtasiye" }),
+            ("Teknoloji", new[] { "elektronik", "teknoloji", "bilgisayar", "telefon", "vatan", "teknosa", "mediamarkt", "samsung", "huawei", "lenovo", "asus", "playstation", "xbox", "steam", "epicgames", "yazilim", "hosting", "domain" }),
+            ("Ev", new[] { "ev", "mobilya", "dekorasyon", "emlak", "ikea", "koctas", "bauhaus", "englishhome", "madamecoco", "zucaciye", "beyazesya", "klima", "tesisat", "temizlik", "perde", "hali" }),
+            ("Vergi / Resmi", new[] { "vergi", "resmi", "harc", "noter", "mahkeme", "belediye", "trafikcezasi", "pasaport", "ehliyet", "tapu", "sgkprim" }));
+        if (expenseCategory is not "Diğer") return expenseCategory;
         if (HasAny(text, "qr")) return "Para Transferi";
         return "Diğer";
+    }
+
+    private static string BestCategory(string text, params (string Category, string[] Keywords)[] groups)
+    {
+        var ignoredShortKeywords = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "ev", "su", "gaz", "oto", "sok", "bp", "hm", "qr", "eft", "pos"
+        };
+
+        var match = groups
+            .SelectMany(group => group.Keywords.Select(keyword => new
+            {
+                group.Category,
+                Keyword = HeaderKey(keyword)
+            }))
+            .Where(item => item.Keyword.Length >= 4 || !ignoredShortKeywords.Contains(item.Keyword))
+            .Where(item => text.Contains(item.Keyword, StringComparison.Ordinal))
+            .OrderByDescending(item => item.Keyword.Length)
+            .FirstOrDefault();
+
+        return match?.Category ?? "Diğer";
     }
 
     private static bool NeedsUserReview(string description, BudgetEntryType type)
