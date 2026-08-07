@@ -115,5 +115,5 @@ BankApi/
 
 Geliştirme ortamındaki JWT anahtarı örnek bir değerdir. Gerçek kullanımda `Jwt:Key` değeri ortam değişkeni veya güvenli bir secret yönetim sistemi üzerinden verilmelidir.
 
-Bu proje eğitim ve prototip amaçlı geliştirilmiştir; gerçek banka altyapısı veya gerçek para transfer sistemi değildir.
+B
 
