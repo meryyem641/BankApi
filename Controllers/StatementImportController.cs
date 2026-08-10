@@ -753,14 +753,23 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
         var rules = await db.MerchantCategoryRules
             .Where(rule => rule.UserId == null || rule.UserId == userId)
             .OrderByDescending(rule => rule.UserId == userId)
-            .ThenByDescending(rule => rule.Keyword.Length)
             .ToListAsync();
 
         foreach (var entry in entries)
         {
-            var text = MerchantCategoryRulesController.NormalizeKeyword(entry.Description);
-            var rule = rules.FirstOrDefault(item =>
-                item.Type == entry.Type && text.Contains(item.Keyword));
+            var text = HeaderKey(entry.Description);
+            var rule = rules
+                .Where(item => item.Type == entry.Type)
+                .Select(item => new
+                {
+                    Rule = item,
+                    Keyword = HeaderKey(item.Keyword)
+                })
+                .Where(item => text.Contains(item.Keyword, StringComparison.Ordinal))
+                .OrderByDescending(item => item.Rule.UserId == userId)
+                .ThenByDescending(item => item.Keyword.Length)
+                .Select(item => item.Rule)
+                .FirstOrDefault();
             if (rule is not null)
             {
                 entry.Category = rule.Category;
