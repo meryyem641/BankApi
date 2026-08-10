@@ -1,0 +1,38 @@
+name: Deploy BankApi test
+
+on:
+  push:
+    branches: [test]
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, x64]
+
+    steps:
+      - name: Checkout test branch
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t bankapi:latest .
+
+      - name: Prepare persistent database location
+        run: |
+          mkdir -p /home/meryem/BankApi-data
+          if [ ! -f /home/meryem/BankApi-data/bankapi.db ] && [ -f /home/meryem/BankApi/bankapi.db ]; then
+            cp /home/meryem/BankApi/bankapi.db /home/meryem/BankApi-data/bankapi.db
+          fi
+
+      - name: Replace running container
+        run: |
+          docker rm -f bankapi || true
+          docker run -d \
+            --name bankapi \
+            --restart unless-stopped \
+            -p 5076:8080 \
+            -v /home/meryem/BankApi-data/bankapi.db:/app/bankapi.db \
+            bankapi:latest
+
+      - name: Verify deployment
+        run: |
+          sleep 5
+          curl --fail --silent --show-error http://127.0.0.1:5076/swagger/index.html > /dev/null
