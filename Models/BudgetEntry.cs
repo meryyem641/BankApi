@@ -6,6 +6,10 @@ public class BudgetEntry
 
     public int UserId { get; set; }
 
+    // Ekstre içe aktarımında hangi banka hesabından/kredi kartından geldiğini
+    // takip etmek için kullanılır; manuel kayıtlarda boş kalabilir.
+    public int? AccountId { get; set; }
+
     public BudgetEntryType Type { get; set; }
 
     public string Category { get; set; } = string.Empty;
@@ -25,6 +29,8 @@ public class BudgetEntry
     public string Treatment { get; set; } = "Budget";
 
     public User? User { get; set; }
+
+    public Account? Account { get; set; }
 }
 
 public enum BudgetEntryType

@@ -475,6 +475,66 @@ using (var scope = app.Services.CreateScope())
             ON Accounts (AccountNumber);
     """);
 
+    // Kullanıcıların kendi banka hesabı/kredi kartı ekleyip isim
+    // verebilmesi için hesap türü ve takma ad sütunları eklenir.
+    try
+    {
+        db.Database.ExecuteSqlRaw(
+            "ALTER TABLE Accounts ADD COLUMN Type INTEGER NOT NULL DEFAULT 0;");
+        db.Database.ExecuteSqlRaw(
+            "ALTER TABLE Accounts ADD COLUMN Name TEXT NOT NULL DEFAULT '';");
+    }
+    catch (Microsoft.Data.Sqlite.SqliteException exception)
+        when (exception.SqliteErrorCode == 1)
+    {
+        // Sütunlar mevcutsa başlangıç işlemi tekrar çalıştırılabilir.
+    }
+
+    // Ekstre işlemlerinin hangi karta/hesaba ait olduğunu takip etmek için
+    // BudgetEntries tablosuna isteğe bağlı bir hesap bağlantısı eklenir.
+    try
+    {
+        db.Database.ExecuteSqlRaw(
+            "ALTER TABLE BudgetEntries ADD COLUMN AccountId INTEGER NULL REFERENCES Accounts (Id) ON DELETE SET NULL;");
+    }
+    catch (Microsoft.Data.Sqlite.SqliteException exception)
+        when (exception.SqliteErrorCode == 1)
+    {
+        // Sütun mevcutsa başlangıç işlemi tekrar çalıştırılabilir.
+    }
+
+    db.Database.ExecuteSqlRaw(
+        "CREATE INDEX IF NOT EXISTS IX_BudgetEntries_AccountId ON BudgetEntries (AccountId);");
+
+    db.Database.ExecuteSqlRaw("""
+        CREATE TABLE IF NOT EXISTS SavingsGoals (
+            Id INTEGER NOT NULL CONSTRAINT PK_SavingsGoals PRIMARY KEY AUTOINCREMENT,
+            UserId INTEGER NOT NULL,
+            Name TEXT NOT NULL,
+            TargetAmount DECIMAL NOT NULL,
+            SavedAmount DECIMAL NOT NULL DEFAULT 0,
+            TargetDate TEXT NULL,
+            CreatedAt TEXT NOT NULL,
+            CONSTRAINT FK_SavingsGoals_Users_UserId FOREIGN KEY (UserId) REFERENCES Users (Id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS IX_SavingsGoals_UserId ON SavingsGoals (UserId);
+    """);
+
+    db.Database.ExecuteSqlRaw("""
+        CREATE TABLE IF NOT EXISTS RecurringPayments (
+            Id INTEGER NOT NULL CONSTRAINT PK_RecurringPayments PRIMARY KEY AUTOINCREMENT,
+            UserId INTEGER NOT NULL,
+            Name TEXT NOT NULL,
+            Amount DECIMAL NOT NULL,
+            DueDay INTEGER NOT NULL,
+            Category TEXT NOT NULL,
+            IsActive INTEGER NOT NULL DEFAULT 1,
+            CreatedAt TEXT NOT NULL,
+            CONSTRAINT FK_RecurringPayments_Users_UserId FOREIGN KEY (UserId) REFERENCES Users (Id) ON DELETE CASCADE
+        );
+        CREATE INDEX IF NOT EXISTS IX_RecurringPayments_UserId ON RecurringPayments (UserId);
+    """);
+
     db.Database.ExecuteSqlRaw("""
         CREATE TABLE IF NOT EXISTS Transfers (
             Id INTEGER NOT NULL CONSTRAINT PK_Transfers PRIMARY KEY AUTOINCREMENT,

@@ -17,6 +17,8 @@ public sealed class BankDbContext(DbContextOptions<BankDbContext> options)
     public DbSet<BudgetCategory> BudgetCategories => Set<BudgetCategory>();
     public DbSet<MerchantCategoryRule> MerchantCategoryRules => Set<MerchantCategoryRule>();
     public DbSet<Receivable> Receivables => Set<Receivable>();
+    public DbSet<SavingsGoal> SavingsGoals => Set<SavingsGoal>();
+    public DbSet<RecurringPayment> RecurringPayments => Set<RecurringPayment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -71,6 +73,12 @@ public sealed class BankDbContext(DbContextOptions<BankDbContext> options)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<BudgetEntry>()
+            .HasOne(entry => entry.Account)
+            .WithMany()
+            .HasForeignKey(entry => entry.AccountId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<BudgetEntry>()
             .Property(entry => entry.Amount)
             .HasPrecision(18, 2);
 
@@ -99,5 +107,29 @@ public sealed class BankDbContext(DbContextOptions<BankDbContext> options)
         modelBuilder.Entity<MerchantCategoryRule>()
             .HasIndex(rule => new { rule.UserId, rule.Keyword, rule.Type })
             .IsUnique();
+
+        modelBuilder.Entity<SavingsGoal>()
+            .HasOne(goal => goal.User)
+            .WithMany()
+            .HasForeignKey(goal => goal.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<SavingsGoal>()
+            .Property(goal => goal.TargetAmount)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<SavingsGoal>()
+            .Property(goal => goal.SavedAmount)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<RecurringPayment>()
+            .HasOne(payment => payment.User)
+            .WithMany()
+            .HasForeignKey(payment => payment.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<RecurringPayment>()
+            .Property(payment => payment.Amount)
+            .HasPrecision(18, 2);
     }
 }

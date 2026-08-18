@@ -1,0 +1,19 @@
+{
+  "name": "Finansal Bütçe ve Harcama Yönetim Sistemi",
+  "short_name": "Bütçem",
+  "description": "Gelir, gider, bütçe ve kart hareketlerini tek panelde yönetin.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#071a31",
+  "theme_color": "#21113f",
+  "lang": "tr",
+  "icons": [
+    {
+      "src": "/images/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

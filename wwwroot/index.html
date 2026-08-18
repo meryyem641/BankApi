@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Finansal Bütçe ve Harcama Yönetim Sistemi</title>
+    <link rel="icon" type="image/svg+xml" href="/images/icon.svg">
+    <link rel="apple-touch-icon" href="/images/icon.svg">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="description" content="Gelir, gider, bütçe ve kart hareketlerini tek panelde yönetin.">
+    <meta name="theme-color" content="#21113f">
     <style>
         :root { --navy: #21113f; --blue: #7c3aed; --bg: #f3f6fb; --border: #e2e8f0; --muted: #64748b; }
         * { box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; margin: 0; color: #172033; background-image: linear-gradient(rgba(5, 24, 48, .68), rgba(5, 24, 48, .78)), url('/images/bank-background.png'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; margin: 0; color: #172033; background-image: linear-gradient(rgba(5, 24, 48, .68), rgba(5, 24, 48, .78)), url('/images/bank-background.png'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; }
         .topbar { background: var(--navy); color: white; padding: 16px 5%; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
         .brand { font-size: 20px; font-weight: 700; letter-spacing: .2px; }
         .topbar small { color: #cbd5e1; display: block; margin-top: 3px; }
         .topbar-actions { display: flex; align-items: center; gap: 12px; }
         .topbar #session { color: #dbeafe; margin: 0; }
-        #profileTopButton { display: none; background: rgba(255, 255, 255, .12); color: white; border-color: rgba(255, 255, 255, .45); }
-        #profileTopButton:hover { background: rgba(255, 255, 255, .22); border-color: white; }
         main { max-width: 1180px; margin: 24px auto; padding: 0 20px 40px; }
-        .intro { margin-bottom: 18px; }
-        .intro h1 { margin: 0 0 6px; font-size: 28px; }
-        .intro p { margin: 0; color: #e2e8f0; }
         .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
         section { background: rgba(255, 255, 255, .94); border: 1px solid rgba(255, 255, 255, .65); border-radius: 14px; padding: 20px; margin: 0; box-shadow: 0 8px 24px rgba(2, 12, 27, .18); backdrop-filter: blur(3px); }
         #authSection { max-width: 560px; margin: 72px auto 0; padding: 34px 38px 30px; border-radius: 20px; background: rgba(255, 255, 255, .97); box-shadow: 0 22px 60px rgba(2, 12, 27, .32); animation: cardEnter .65s ease-out both; }
@@ -54,12 +54,10 @@
         .sidebar-label { padding: 0 13px 10px; color: #6e89a8; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
         .sidebar button { display: flex; align-items: center; width: 100%; margin: 3px 0; padding: 12px 13px; border: 1px solid transparent; border-radius: 10px; color: #a9bdd4; background: transparent; text-align: left; font-size: 14px; transition: background .2s, color .2s, transform .2s; }
         .sidebar button:hover, .sidebar button.active { color: white; background: linear-gradient(90deg, rgba(124, 58, 237, .3), rgba(124, 58, 237, .08)); border-color: rgba(192, 132, 252, .25); transform: translateX(2px); }
-        .sidebar-icon { width: 28px; color: #c084fc; font-size: 17px; }
+        .sidebar-icon { display: inline-flex; align-items: center; justify-content: center; width: 28px; color: #c084fc; }
+        .sidebar-icon svg { display: block; flex-shrink: 0; }
         main { max-width: 1220px; padding: 30px 28px 60px; }
         .signed-in main { max-width: none; margin: 0 0 0 236px; padding: 34px 42px 70px; }
-        .intro { max-width: 1220px; margin: 0 auto 24px; }
-        .intro h1 { color: white; font-size: 30px; letter-spacing: -.5px; }
-        .intro p { color: #a9bdd4; }
         section { border: 1px solid rgba(226, 232, 240, .78); border-radius: 18px; padding: 26px; box-shadow: 0 16px 40px rgba(2, 12, 27, .16); }
         section[id] { scroll-margin-top: 104px; }
         section h2 { color: #102a4c; font-size: 21px; letter-spacing: -.25px; }
@@ -123,6 +121,16 @@
         @keyframes welcomeFade { from { opacity: 0; } to { opacity: 1; } }
         @keyframes welcomeCard { from { opacity: 0; transform: translateY(18px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
         @media (max-width: 760px) { #appResponse { top: 82px; right: 16px; } }
+        .modal-overlay { position: fixed; z-index: 50; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(7, 15, 33, .55); backdrop-filter: blur(3px); animation: welcomeFade .2s ease-out both; }
+        .modal-overlay[hidden] { display: none; }
+        .modal-card { width: min(400px, 100%); padding: 26px 26px 22px; border-radius: 16px; background: white; box-shadow: 0 24px 60px rgba(2, 12, 27, .35); animation: cardEnter .25s cubic-bezier(.2,.8,.2,1) both; }
+        .modal-card p { margin: 0 0 18px; color: #102a4c; font-size: 15px; line-height: 1.5; }
+        .modal-card input { width: 100%; margin: -6px 0 18px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+        .modal-actions button { min-width: 96px; padding: 10px 16px; }
+        .modal-ok { background: var(--blue); color: white; border-color: var(--blue); }
+        .modal-cancel { background: white; color: #172033; border-color: #cbd5e1; }
+        @media (max-width: 480px) { .modal-actions { flex-direction: column-reverse; } .modal-actions button { width: 100%; } }
         table { width: 100%; border-collapse: collapse; margin-top: 12px; }
         th, td { text-align: left; border-bottom: 1px solid #e5e8ef; padding: 10px 8px; }
         th { color: var(--muted); font-size: 13px; }
@@ -208,6 +216,7 @@
         .budget-income { color: #15803d; font-weight: 700; }
         .budget-expense { color: #b91c1c; font-weight: 700; }
         .budget-report-section .section-heading-row > input { min-width: 155px; flex: 0 0 auto; }
+        .report-heading-actions { display: flex; align-items: center; gap: 8px; }
         .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
         .report-grid > div { padding: 18px; border: 1px solid #e5ebf3; border-radius: 14px; background: #f8fbff; }
         .report-grid h3 { margin-top: 0; color: #102a4c; }
@@ -334,35 +343,103 @@
         @keyframes cardEnter { from { opacity: 0; transform: translateY(12px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
         #authSection details { margin-top: 20px; padding-top: 18px; border-top: 1px solid #e7edf5; }
         @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } section.wide { grid-column: auto; } .topbar { padding: 14px 20px; } #authSection { margin: 34px 12px 0; padding: 28px 22px 24px; } }
+        /* Profesyonel görünüm güncellemesi */
+        h1, h2, h3 { letter-spacing: -.3px; }
+        .brand { font-size: 21px; font-weight: 800; }
+        .sidebar-label { font-weight: 800; }
+        .sidebar button { font-weight: 500; }
+        .sidebar button.active { font-weight: 700; }
+        button { border-radius: 10px; font-weight: 600; }
+        input, select { border-radius: 9px; }
+        .account-card, .statement-import-box, .import-form, .budget-entry-form, .transaction-filter-form, .deposit-box, .limit-box, .report-grid > div, .expense-chart-box { border-radius: 14px; }
+        .dashboard-header h2, .section-heading-row h2 { font-weight: 800; }
+        section h2 { font-weight: 700; }
+        /* Karanlık mod */
+        #themeToggleButton { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; padding: 0; border-radius: 10px; }
+        #themeToggleButton svg { display: block; }
+        [data-theme="dark"] { --muted: #94a3b8; --border: rgba(148, 163, 184, .22); }
+        [data-theme="dark"] section { background: rgba(15, 23, 42, .92); border-color: rgba(148, 163, 184, .16); color: #e2e8f0; }
+        [data-theme="dark"] #profileSection, [data-theme="dark"] #approvalSection,
+        [data-theme="dark"] #adminDashboardSection,
+        [data-theme="dark"] #customerSection, [data-theme="dark"] #accountSection, [data-theme="dark"] #userSection, [data-theme="dark"] #transferSection,
+        [data-theme="dark"] .dashboard-section, [data-theme="dark"] .budget-section, [data-theme="dark"] .budget-report-section,
+        [data-theme="dark"] #personalRulesSection { background: linear-gradient(145deg, rgba(15, 23, 42, .94), rgba(30, 20, 55, .88)); }
+        [data-theme="dark"] #authSection { background: rgba(15, 23, 42, .96); }
+        [data-theme="dark"] section h2, [data-theme="dark"] .auth-heading h2, [data-theme="dark"] .login-mode-title,
+        [data-theme="dark"] .dashboard-header h2, [data-theme="dark"] .dashboard-toolbar h3,
+        [data-theme="dark"] .deposit-box h3, [data-theme="dark"] .statement-import-box h3, [data-theme="dark"] .report-grid h3,
+        [data-theme="dark"] .limit-box h3, [data-theme="dark"] .expense-chart-box h3, [data-theme="dark"] .profile-card h3,
+        [data-theme="dark"] .investment-summary-box h3, [data-theme="dark"] .admin-stats h2,
+        [data-theme="dark"] .stat-card strong, [data-theme="dark"] .budget-summary strong, [data-theme="dark"] .limit-row-header strong,
+        [data-theme="dark"] .category-row-header strong, [data-theme="dark"] .admin-stat strong, [data-theme="dark"] .investment-summary-grid strong,
+        [data-theme="dark"] .modal-card p { color: #f1f5f9; }
+        [data-theme="dark"] .auth-heading p { color: #94a3b8; }
+        [data-theme="dark"] .login-choice button { background: linear-gradient(145deg, rgba(30, 41, 59, .92), rgba(15, 23, 42, .92)); color: #e2e8f0; border-color: rgba(148, 163, 184, .25); }
+        [data-theme="dark"] .choice-desc { color: #94a3b8; }
+        [data-theme="dark"] #authSection input { background: rgba(15, 23, 42, .55); color: #e2e8f0; border-color: rgba(148, 163, 184, .28); }
+        [data-theme="dark"] input, [data-theme="dark"] select { background: rgba(15, 23, 42, .5); color: #e2e8f0; border-color: rgba(148, 163, 184, .28); }
+        [data-theme="dark"] .deposit-box, [data-theme="dark"] .transaction-filter-form, [data-theme="dark"] .budget-summary,
+        [data-theme="dark"] .budget-entry-form, [data-theme="dark"] .statement-import-box, [data-theme="dark"] .report-grid > div,
+        [data-theme="dark"] .limit-box, [data-theme="dark"] .expense-chart-box, [data-theme="dark"] .profile-card,
+        [data-theme="dark"] .admin-stat, [data-theme="dark"] .import-form { background: rgba(30, 41, 59, .55); border-color: rgba(148, 163, 184, .16); }
+        [data-theme="dark"] .budget-summary.income { background: rgba(22, 163, 74, .16); }
+        [data-theme="dark"] .budget-summary.expense { background: rgba(220, 38, 38, .14); }
+        [data-theme="dark"] .budget-summary.balance { background: rgba(124, 58, 237, .16); }
+        [data-theme="dark"] .dashboard-date { background: rgba(124, 58, 237, .18); color: #d8b4fe; border-color: rgba(168, 85, 247, .3); }
+        [data-theme="dark"] th { background: transparent; }
+        [data-theme="dark"] th, [data-theme="dark"] td { border-bottom-color: rgba(148, 163, 184, .14); }
+        [data-theme="dark"] td { color: #e2e8f0; }
+        [data-theme="dark"] table tbody tr:hover { background: rgba(124, 58, 237, .1); }
+        [data-theme="dark"] .recent-table { background: rgba(30, 41, 59, .4); border-color: rgba(148, 163, 184, .14); }
+        [data-theme="dark"] .recent-table th { background: rgba(124, 58, 237, .18); color: #d8b4fe; }
+        [data-theme="dark"] #appResponse { background: rgba(15, 23, 42, .98); color: #e2e8f0; border-color: rgba(96, 165, 250, .35); }
+        [data-theme="dark"] #appResponseText { color: #cbd5e1; }
+        [data-theme="dark"] .modal-card { background: rgba(17, 24, 39, .98); }
+        [data-theme="dark"] .modal-cancel { background: rgba(30, 41, 59, .8); color: #e2e8f0; border-color: rgba(148, 163, 184, .3); }
+        [data-theme="dark"] .profile-row, [data-theme="dark"] .limit-row, [data-theme="dark"] .monthly-report-item { border-color: rgba(148, 163, 184, .14); }
+        [data-theme="dark"] .investment-summary-grid > div { background: rgba(30, 41, 59, .5); }
+        [data-theme="dark"] .investment-summary-box { border-color: rgba(168, 85, 247, .22); }
     </style>
 </head>
 <body>
     <header class="topbar">
         <div><div class="brand">Finansal Bütçe ve Harcama Yönetim Sistemi</div><small>Gelir, gider ve bütçe yönetimi</small></div>
-        <div class="topbar-actions"><p id="session">Oturum açılmadı.</p><button id="profileTopButton">Profilim</button><button id="logoutTopButton">Giriş Yap</button></div>
+        <div class="topbar-actions"><button id="themeToggleButton" type="button" aria-label="Karanlık moda geç"></button><p id="session">Oturum açılmadı.</p><button id="logoutTopButton">Giriş Yap</button></div>
     </header>
     <div id="appResponse" hidden role="status" aria-live="polite"><div><span id="appResponseTitle">Bilgi</span><span id="appResponseText"></span></div><button id="appResponseClose" type="button" aria-label="Mesajı kapat">×</button></div>
     <div id="welcomeOverlay" hidden><div class="welcome-card"><button id="welcomeClose" class="welcome-close" type="button" aria-label="Karşılama mesajını kapat">×</button><div class="welcome-content"><h2 id="welcomeTitle">HOŞ GELDİN!</h2><p id="welcomeText">Güvenli hesabınıza yönlendiriliyorsunuz.</p></div></div></div>
+    <div id="confirmModal" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="confirmModalMessage">
+        <div class="modal-card">
+            <p id="confirmModalMessage"></p>
+            <input id="confirmModalInput" type="text" hidden>
+            <div class="modal-actions">
+                <button type="button" id="confirmModalCancel" class="modal-cancel">Vazgeç</button>
+                <button type="button" id="confirmModalOk" class="modal-ok">Evet, devam et</button>
+            </div>
+        </div>
+    </div>
     <aside id="sidebar" class="sidebar">
         <div class="sidebar-label">Çalışma alanı</div>
-        <button data-target="dashboardSection" class="user-only"><span class="sidebar-icon">⌂</span>Ana sayfa</button>
-        <button data-target="adminDashboardSection" class="admin-only"><span class="sidebar-icon">⌂</span>Ana sayfa</button>
-        <button data-target="profileSection"><span class="sidebar-icon">◉</span>Profilim</button>
-        <button data-target="budgetSection" class="user-only"><span class="sidebar-icon">₺</span>Bütçem</button>
-        <button data-target="personalRulesSection" class="user-only"><span class="sidebar-icon">⌕</span>Kategori kuralları</button>
-        <button data-target="budgetReportSection" class="user-only"><span class="sidebar-icon">▥</span>Raporlarım</button>
-        <button data-target="accountSection" class="bank-legacy"><span class="sidebar-icon">▣</span><span class="account-nav-label">Hesaplarım</span></button>
-        <button data-target="transferSection" class="user-only bank-legacy"><span class="sidebar-icon">↗</span>Para transferi</button>
-        <button data-target="customerSection" class="admin-only"><span class="sidebar-icon">♙</span>Müşteriler</button>
-        <button data-target="approvalSection" class="admin-only"><span class="sidebar-icon">✓</span>Onay bekleyenler</button>
-        <button data-target="depositRequestSection" class="admin-only bank-legacy"><span class="sidebar-icon">₺</span>Para yatırma talepleri</button>
-        <button data-target="userSection" class="admin-only"><span class="sidebar-icon">⚙</span>Kullanıcı yönetimi</button>
-        <button data-target="categorySection" class="admin-only"><span class="sidebar-icon">▦</span>Kategori yönetimi</button>
-        <button data-target="auditSection" class="admin-only"><span class="sidebar-icon">▤</span>İşlem geçmişi</button>
-        <button data-target="securitySection" class="admin-only"><span class="sidebar-icon">⚿</span>Güvenlik</button>
+        <button data-target="dashboardSection" class="user-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9.5a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-9"/></svg></span>Ana sayfa</button>
+        <button data-target="adminDashboardSection" class="admin-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9.5a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-9"/></svg></span>Ana sayfa</button>
+        <button data-target="profileSection"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6 19c1.2-2.6 3.5-4 6-4s4.8 1.4 6 4"/></svg></span>Profilim</button>
+        <button data-target="budgetSection" class="user-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1"/><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2H6"/><path d="M16 13h2"/></svg></span>Bütçem</button>
+        <button data-target="personalRulesSection" class="user-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12 12.6 4.6a2 2 0 0 0-1.4-.6H5a1 1 0 0 0-1 1v6.2c0 .5.2 1 .6 1.4L12 20"/><circle cx="8" cy="8" r="1.4"/></svg></span>Kategori kuralları</button>
+        <button data-target="budgetReportSection" class="user-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V10"/><path d="M12 20V4"/><path d="M19 20v-7"/></svg></span>Raporlarım</button>
+        <button data-target="cardsSection" class="user-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="2.2"/><path d="M2.5 10h19"/><path d="M6 15h4"/></svg></span>Kartlarım</button>
+        <button data-target="savingsGoalsSection" class="user-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></svg></span>Hedeflerim</button>
+        <button data-target="recurringPaymentsSection" class="user-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.3-6"/><path d="M20 12a8 8 0 0 1-13.3 6"/><path d="M17 3v4h-4"/><path d="M7 21v-4h4"/></svg></span>Abonelikler</button>
+        <button data-target="accountSection" class="bank-legacy"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="2.2"/><path d="M2.5 10h19"/><path d="M6 15h4"/></svg></span><span class="account-nav-label">Hesaplarım</span></button>
+        <button data-target="transferSection" class="user-only bank-legacy"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 17 4"/><path d="M9 4h8v8"/></svg></span>Para transferi</button>
+        <button data-target="customerSection" class="admin-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="3.2"/><path d="M3.5 19c1-3 3-4.6 5.5-4.6s4.5 1.6 5.5 4.6"/><circle cx="17" cy="8.5" r="2.6"/><path d="M15.5 14.6c2.1.3 3.6 1.8 4.4 4.4"/></svg></span>Müşteriler</button>
+        <button data-target="approvalSection" class="admin-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.6 2.6L16 9.5"/></svg></span>Onay bekleyenler</button>
+        <button data-target="depositRequestSection" class="admin-only bank-legacy"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v13"/><path d="M7 12l5 5 5-5"/><path d="M5 20h14"/></svg></span>Para yatırma talepleri</button>
+        <button data-target="userSection" class="admin-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.2M12 18.8V21M21 12h-2.2M5.2 12H3M18.4 5.6l-1.5 1.5M7.1 16.9l-1.5 1.5M18.4 18.4l-1.5-1.5M7.1 7.1 5.6 5.6"/></svg></span>Kullanıcı yönetimi</button>
+        <button data-target="categorySection" class="admin-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="1.4"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.4"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.4"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.4"/></svg></span>Kategori yönetimi</button>
+        <button data-target="auditSection" class="admin-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.3l3.5 2"/></svg></span>İşlem geçmişi</button>
+        <button data-target="securitySection" class="admin-only"><span class="sidebar-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 19 6v6c0 4.6-3 7.6-7 8.5-4-.9-7-3.9-7-8.5V6z"/><path d="M9 11.6l2 2 4-4.2"/></svg></span>Güvenlik</button>
     </aside>
     <main>
-        <div class="intro app-content"><h1 id="introTitle">Kontrol Paneli</h1><p id="introDescription">Gelirlerini, giderlerini ve bütçeni tek ekrandan yönet.</p></div>
         <div class="grid">
 
     <section id="dashboardSection" class="wide user-only app-content dashboard-section">
@@ -444,6 +521,7 @@
         <div class="statement-import-box">
             <h3>Banka ekstresi içe aktar</h3>
             <form id="statementImportForm">
+                <select id="statementAccountId" required><option value="">Kart/hesap seçin</option></select>
                 <input id="statementExcelFile" type="file" accept=".xlsx,.pdf" required>
                 <button type="submit">Ekstreyi Yükle</button>
             </form>
@@ -478,7 +556,10 @@
     <section id="budgetReportSection" class="wide user-only app-content budget-report-section">
         <div class="section-heading-row">
             <div><h2>Bütçe raporlarım</h2></div>
-            <input id="reportMonth" type="month" aria-label="Rapor ayı">
+            <div class="report-heading-actions">
+                <input id="reportMonth" type="month" aria-label="Rapor ayı">
+                <button id="exportReportButton" type="button">CSV İndir</button>
+            </div>
         </div>
         <div class="budget-summary-grid">
             <div class="budget-summary income"><small>Aylık gelir</small><strong id="reportIncome">₺0,00</strong></div>
@@ -616,6 +697,50 @@
         <ul id="customerList"></ul>
     </section>
 
+    <section id="cardsSection" class="wide user-only app-content">
+        <div class="section-heading-row"><div><h2>Kartlarım</h2></div><button id="refreshCardsButton" type="button">Yenile</button></div>
+        <p class="muted-text">Banka hesaplarını ve kredi kartlarını buradan ekleyip isim verebilir, ekstre yüklerken hangi karta ait olduğunu seçebilirsin.</p>
+        <div id="cardList"><p>Henüz kart veya hesap eklenmedi.</p></div>
+        <form id="cardForm" class="budget-entry-form">
+            <input id="cardName" placeholder="Kart adı (ör. Maaş Hesabım, Bonus Kartım)" required>
+            <select id="cardType" required>
+                <option value="Bank">Banka Hesabı</option>
+                <option value="CreditCard">Kredi Kartı</option>
+            </select>
+            <button type="submit">Kart Ekle</button>
+        </form>
+    </section>
+
+    <section id="savingsGoalsSection" class="wide user-only app-content">
+        <div class="section-heading-row"><div><h2>Tasarruf hedeflerim</h2></div><button id="refreshSavingsGoalsButton" type="button">Yenile</button></div>
+        <p class="muted-text">Bir hedef belirle, biriktirdikçe üzerine ekle; ilerlemeni burada takip edebilirsin.</p>
+        <div id="savingsGoalList"><p>Henüz hedef eklenmedi.</p></div>
+        <form id="savingsGoalForm" class="budget-entry-form">
+            <input id="savingsGoalName" placeholder="Hedef adı (ör. Tatil, Diz üstü bilgisayar)" required>
+            <input id="savingsGoalTarget" type="number" min="1" step="0.01" placeholder="Hedef tutar (TL)" required>
+            <input id="savingsGoalDate" type="date" aria-label="Hedef tarihi (isteğe bağlı)">
+            <button type="submit">Hedef Ekle</button>
+        </form>
+    </section>
+
+    <section id="recurringPaymentsSection" class="wide user-only app-content">
+        <div class="section-heading-row"><div><h2>Abonelikler / Tekrarlayan ödemeler</h2></div><button id="refreshRecurringButton" type="button">Yenile</button></div>
+        <p class="muted-text">Her ay düzenli ödediğin tutarları ekle; ödeme günü yaklaşınca panelde uyarı görürsün.</p>
+        <div id="recurringPaymentList"><p>Henüz tekrarlayan ödeme eklenmedi.</p></div>
+        <form id="recurringPaymentForm" class="budget-entry-form">
+            <input id="recurringPaymentName" placeholder="Ödeme adı (ör. Netflix, Kira)" required>
+            <input id="recurringPaymentAmount" type="number" min="0.01" step="0.01" placeholder="Tutar (TL)" required>
+            <input id="recurringPaymentDay" type="number" min="1" max="28" placeholder="Ayın günü (1-28)" required>
+            <select id="recurringPaymentCategory">
+                <option value="Abonelik">Abonelik</option>
+                <option value="Kira">Kira</option>
+                <option value="Fatura">Fatura</option>
+                <option value="Diğer">Diğer</option>
+            </select>
+            <button type="submit">Ekle</button>
+        </form>
+    </section>
+
     <section id="accountSection" class="app-content bank-legacy">
         <h2>Hesaplarım</h2>
         <button id="loadAccountsButton">Hesapları Yenile</button>
@@ -699,11 +824,28 @@
     <script>
         const $ = id => document.getElementById(id);
 
+        function applyTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem("theme", theme);
+            const sun = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>';
+            const moon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>';
+            const button = $("themeToggleButton");
+            if (button) {
+                button.innerHTML = theme === "dark" ? sun : moon;
+                button.setAttribute("aria-label", theme === "dark" ? "Aydınlık moda geç" : "Karanlık moda geç");
+            }
+        }
+        function toggleTheme() {
+            const current = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+            applyTheme(current === "dark" ? "light" : "dark");
+        }
+        applyTheme(localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+
         let responseTimer;
         let activeSectionId = "dashboardSection";
         function showAppResponse(message) {
             const text = String(message || "");
-            const isError = /başarısız|hatalı|hata|zorunlu|bulunamadı|yetkin|reddedildi|geçersiz|yetersiz|seçmelisin|seçin|yazmalısın/i.test(text);
+            const isError = /başarısız|hatalı|hata|zorunlu|bulunamadı|yetkin|reddedildi|geçersiz|yetersiz|seçmelisin|seçin|yazmalısın|aşıldı|yaklaşıyor|yaklaşan/i.test(text);
             const response = $("appResponse");
             response.className = isError ? "error" : "success";
             $("appResponseTitle").textContent = isError ? "İşlem gerçekleştirilemedi" : "İşlem sonucu";
@@ -713,6 +855,29 @@
             responseTimer = setTimeout(() => { response.hidden = true; }, 6000);
         }
         function alert(message) { showAppResponse(message); }
+        let modalResolve = null;
+        let modalIsPrompt = false;
+        function openModal(message, options = {}) {
+            modalIsPrompt = !!options.isPrompt;
+            $("confirmModalMessage").textContent = message;
+            $("confirmModalInput").hidden = !modalIsPrompt;
+            $("confirmModalInput").value = options.defaultValue || "";
+            $("confirmModalOk").textContent = options.okText || (modalIsPrompt ? "Kaydet" : "Evet, devam et");
+            $("confirmModalCancel").textContent = options.cancelText || "Vazgeç";
+            $("confirmModal").hidden = false;
+            if (modalIsPrompt) requestAnimationFrame(() => { $("confirmModalInput").focus(); $("confirmModalInput").select(); });
+            else $("confirmModalOk").focus();
+            return new Promise(resolve => { modalResolve = resolve; });
+        }
+        function resolveModal(confirmed) {
+            $("confirmModal").hidden = true;
+            const value = modalIsPrompt
+                ? (confirmed ? $("confirmModalInput").value.trim() : null)
+                : confirmed;
+            if (modalResolve) { modalResolve(value); modalResolve = null; }
+        }
+        function customConfirm(message, okText) { return openModal(message, { okText }); }
+        function customPrompt(message, defaultValue) { return openModal(message, { isPrompt: true, defaultValue }); }
         let welcomeTimer;
         function showWelcome(userName, admin) {
             $("welcomeTitle").textContent = `HOŞ GELDİN, ${(userName || "KULLANICI").toUpperCase()}!`;
@@ -735,6 +900,10 @@
         let merchantRulePage = 1;
         const merchantRulePageSize = 10;
         let pendingStatementRows = [];
+        let myCards = [];
+        let selectedStatementAccountId = null;
+        let savingsGoalData = [];
+        let recurringPaymentData = [];
         let transactionReviewData = [];
         let receivableData = [];
         let customerData = [];
@@ -777,12 +946,11 @@
             $("session").textContent = signedIn ? "Oturum açık." : "Oturum açılmadı.";
             $("logoutTopButton").textContent = signedIn ? "Çıkış Yap" : "Giriş Yap";
             $("logoutTopButton").style.display = signedIn ? "inline-block" : "none";
-            $("profileTopButton").style.display = signedIn ? "inline-block" : "none";
             $("authSection").style.display = signedIn ? "none" : "block";
             document.querySelectorAll(".app-content").forEach(element => {
                 element.classList.toggle("section-active", signedIn && element.id === activeSectionId);
                 element.style.display = signedIn
-                    ? (element.classList.contains("intro") || element.id === activeSectionId ? "block" : "none")
+                    ? (element.id === activeSectionId ? "block" : "none")
                     : "none";
             });
             document.querySelectorAll(".admin-only").forEach(element => {
@@ -800,10 +968,6 @@
                 element.classList.toggle("section-active", signedIn && element.id === activeSectionId);
                 element.style.display = signedIn && element.id === activeSectionId ? "block" : "none";
             });
-            $("introTitle").textContent = isAdmin() ? "Yönetim Paneli" : "Kontrol Paneli";
-            $("introDescription").textContent = isAdmin()
-                ? "Kullanıcıları, müşterileri ve sistem işlemlerini yönet."
-                : "Gelirlerini, giderlerini ve bütçeni tek ekrandan yönet.";
             document.querySelector(".account-nav-label").textContent = isAdmin()
                 ? "Hesap yönetimi"
                 : "Hesaplarım";
@@ -823,6 +987,11 @@
             loadBudgetCategories();
             loadMerchantRules();
             loadAccounts();
+            if (!isAdmin()) {
+                loadSavingsGoals();
+                loadRecurringPayments();
+                checkBudgetLimitAlerts();
+            }
             if (isAdmin()) {
                 loadAdminDashboard();
                 loadUsers();
@@ -1049,7 +1218,7 @@
             }
         }
         async function deleteBudgetLimit(id) {
-            if (!confirm("Bu kategori bütçe limiti kaldırılsın mı?")) return;
+            if (!(await customConfirm("Bu kategori bütçe limiti kaldırılsın mı?"))) return;
             const result = await readResponse(await fetch(`/api/v1/budget-limits/${id}`, {
                 method: "DELETE", headers: authHeaders()
             }));
@@ -1165,14 +1334,20 @@
         }
         async function importStatement(event) {
             event.preventDefault();
+            const accountId = $("statementAccountId").value;
+            if (!accountId) {
+                alert("Lütfen önce ekstrenin ait olduğu kartı veya hesabı seçin.");
+                return;
+            }
             const file = $("statementExcelFile").files[0];
             if (!file) {
                 alert("Lütfen bir Excel veya PDF ekstre dosyası seçin.");
                 return;
             }
+            selectedStatementAccountId = Number(accountId);
             const formData = new FormData();
             formData.append("file", file);
-            const result = await readResponse(await fetch("/api/v1/statements/import?preview=true", {
+            const result = await readResponse(await fetch(`/api/v1/statements/import?preview=true&accountId=${accountId}`, {
                 method: "POST", headers: authHeaders(), body: formData
             }));
             if (result.response.ok) {
@@ -1234,10 +1409,11 @@
                 return;
             }
             const result = await readResponse(await fetch("/api/v1/statements/confirm", {
-                method: "POST", headers: authHeaders(true), body: JSON.stringify({ rows: selectedRows })
+                method: "POST", headers: authHeaders(true), body: JSON.stringify({ accountId: selectedStatementAccountId, rows: selectedRows })
             }));
             if (result.response.ok) {
                 pendingStatementRows = [];
+                selectedStatementAccountId = null;
                 $("statementPreview").hidden = true;
                 $("statementImportForm").reset();
                 await loadBudgetEntries();
@@ -1247,6 +1423,7 @@
         }
         function cancelStatementImport() {
             pendingStatementRows = [];
+            selectedStatementAccountId = null;
             $("statementPreview").hidden = true;
             $("statementPreviewList").innerHTML = "";
             $("statementImportForm").reset();
@@ -1308,7 +1485,7 @@
             }
         }
         async function deleteMerchantRule(id) {
-            if (!confirm("Bu işletme kuralı kaldırılsın mı?")) return;
+            if (!(await customConfirm("Bu işletme kuralı kaldırılsın mı?"))) return;
             const result = await readResponse(await fetch(`/api/v1/merchant-rules/${id}`, {
                 method: "DELETE", headers: authHeaders()
             }));
@@ -1336,7 +1513,7 @@
             $("budgetEntryCancelButton").hidden = true;
         }
         async function deleteBudgetEntry(id) {
-            if (!confirm("Bu gelir/gider kaydı silinsin mi?")) return;
+            if (!(await customConfirm("Bu gelir/gider kaydı silinsin mi?"))) return;
             const result = await readResponse(await fetch(`/api/v1/budget-entries/${id}`, {
                 method: "DELETE", headers: authHeaders()
             }));
@@ -1597,6 +1774,201 @@
             if (!isAdmin()) {
                 $("depositAccountId").innerHTML = `<option value="">Hesap seçin</option>${result.data.filter(account => account.isActive).map(account => `<option value="${account.id}">${account.accountNumber} · ${formatMoney(account.balance)}</option>`).join("")}`;
             }
+            myCards = result.data;
+            renderCardList();
+            renderStatementAccountOptions();
+        }
+        function cardTypeLabel(type) { return type === "CreditCard" ? "Kredi Kartı" : "Banka Hesabı"; }
+        function cardTypeIcon(type) { return type === "CreditCard" ? "💳" : "🏦"; }
+        function renderCardList() {
+            if (!$("cardList")) return;
+            $("cardList").innerHTML = myCards.length
+                ? `<div class="account-cards">${myCards.map(card => `<article class="account-card"><small>${cardTypeIcon(card.type)} ${cardTypeLabel(card.type)}</small><strong>${card.name || cardTypeLabel(card.type)}</strong><div class="account-card-meta"><span>${card.createdAt ? formatDate(card.createdAt) : ""}</span></div><div class="account-card-footer"><span class="account-status">${card.isActive ? "Aktif" : "Kapalı"}</span><button type="button" onclick="renameCard(${card.id}, '${(card.name || "").replace(/'/g, "\\'")}')">Adını değiştir</button></div></article>`).join("")}</div>`
+                : "<p>Henüz kart veya hesap eklenmedi. Aşağıdan ilk kartını ekleyebilirsin.</p>";
+        }
+        function renderStatementAccountOptions() {
+            if (!$("statementAccountId")) return;
+            const active = myCards.filter(card => card.isActive);
+            $("statementAccountId").innerHTML = `<option value="">Kart/hesap seçin</option>${active.map(card => `<option value="${card.id}">${cardTypeIcon(card.type)} ${card.name || cardTypeLabel(card.type)}</option>`).join("")}`;
+        }
+        async function createCard(event) {
+            event.preventDefault();
+            const result = await readResponse(await fetch("/api/v1/accounts", {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({ name: $("cardName").value.trim(), type: $("cardType").value })
+            }));
+            if (result.response.ok) {
+                alert("Kart eklendi.");
+                $("cardForm").reset();
+                loadAccounts();
+            }
+        }
+        async function renameCard(id, currentName) {
+            const name = await customPrompt("Yeni ad:", currentName || "");
+            if (name === null) return;
+            const trimmed = name.trim();
+            if (!trimmed) {
+                alert("Kart adı boş olamaz.");
+                return;
+            }
+            const result = await readResponse(await fetch(`/api/v1/accounts/${id}/name`, {
+                method: "PATCH", headers: authHeaders(true),
+                body: JSON.stringify({ name: trimmed })
+            }));
+            if (result.response.ok) loadAccounts();
+        }
+        async function loadSavingsGoals() {
+            if (!requireLogin() || isAdmin()) return;
+            const result = await readResponse(await fetch("/api/v1/savings-goals", { headers: authHeaders() }));
+            if (!result.response.ok) return;
+            savingsGoalData = result.data;
+            renderSavingsGoals();
+        }
+        function renderSavingsGoals() {
+            if (!$("savingsGoalList")) return;
+            $("savingsGoalList").innerHTML = savingsGoalData.length
+                ? savingsGoalData.map(goal => {
+                    const percentage = goal.targetAmount > 0 ? Math.min(100, Number(goal.savedAmount) / Number(goal.targetAmount) * 100) : 0;
+                    const remaining = Number(goal.targetAmount) - Number(goal.savedAmount);
+                    return `<div class="limit-row"><div class="limit-row-header"><span>${goal.name}</span><strong>${formatMoney(goal.savedAmount)} / ${formatMoney(goal.targetAmount)}</strong></div><div class="limit-bar"><span style="width:${Math.max(3, percentage)}%"></span></div><small>${remaining > 0 ? `${formatMoney(remaining)} kaldı` : "Hedefe ulaşıldı!"}${goal.targetDate ? ` · Hedef tarih: ${formatDate(goal.targetDate)}` : ""} <button type="button" onclick="contributeSavingsGoal(${goal.id})">Para ekle</button> <button type="button" onclick="deleteSavingsGoal(${goal.id})">Sil</button></small></div>`;
+                }).join("")
+                : "<p>Henüz hedef eklenmedi. Aşağıdan ilk hedefini oluşturabilirsin.</p>";
+        }
+        async function createSavingsGoal(event) {
+            event.preventDefault();
+            const result = await readResponse(await fetch("/api/v1/savings-goals", {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({
+                    name: $("savingsGoalName").value.trim(),
+                    targetAmount: Number($("savingsGoalTarget").value),
+                    targetDate: $("savingsGoalDate").value || null
+                })
+            }));
+            if (result.response.ok) {
+                alert("Hedef eklendi.");
+                $("savingsGoalForm").reset();
+                loadSavingsGoals();
+            }
+        }
+        async function contributeSavingsGoal(id) {
+            const amountText = await customPrompt("Eklenecek tutar (TL):", "");
+            if (amountText === null) return;
+            const amount = Number(amountText);
+            if (!amount || amount <= 0) { alert("Geçerli bir tutar gir."); return; }
+            const result = await readResponse(await fetch(`/api/v1/savings-goals/${id}/contribute`, {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({ amount })
+            }));
+            if (result.response.ok) loadSavingsGoals();
+        }
+        async function deleteSavingsGoal(id) {
+            if (!(await customConfirm("Bu tasarruf hedefi silinsin mi?"))) return;
+            const result = await readResponse(await fetch(`/api/v1/savings-goals/${id}`, {
+                method: "DELETE", headers: authHeaders()
+            }));
+            if (result.response.ok) loadSavingsGoals();
+        }
+        function nextRecurringDueDate(dueDay) {
+            const today = new Date();
+            let due = new Date(today.getFullYear(), today.getMonth(), dueDay);
+            if (due < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
+                due = new Date(today.getFullYear(), today.getMonth() + 1, dueDay);
+            }
+            return due;
+        }
+        async function loadRecurringPayments() {
+            if (!requireLogin() || isAdmin()) return;
+            const result = await readResponse(await fetch("/api/v1/recurring-payments", { headers: authHeaders() }));
+            if (!result.response.ok) return;
+            recurringPaymentData = result.data;
+            renderRecurringPayments();
+            checkRecurringPaymentReminders();
+        }
+        function renderRecurringPayments() {
+            if (!$("recurringPaymentList")) return;
+            $("recurringPaymentList").innerHTML = recurringPaymentData.length
+                ? `<div class="account-cards">${recurringPaymentData.map(payment => {
+                    const daysLeft = Math.ceil((nextRecurringDueDate(payment.dueDay) - new Date()) / (1000 * 60 * 60 * 24));
+                    const soon = payment.isActive && daysLeft <= 3;
+                    return `<article class="account-card"><small>${payment.category}${payment.isActive ? "" : " · Pasif"}</small><strong>${payment.name}</strong><div class="account-card-meta"><span>${formatMoney(payment.amount)}</span><span>Her ayın ${payment.dueDay}. günü</span></div><div class="account-card-footer"><span class="account-status">${soon ? `${Math.max(0, daysLeft)} gün kaldı` : (payment.isActive ? "Aktif" : "Pasif")}</span><button type="button" onclick="toggleRecurringPayment(${payment.id})">${payment.isActive ? "Durdur" : "Etkinleştir"}</button> <button type="button" onclick="deleteRecurringPayment(${payment.id})">Sil</button></div></article>`;
+                }).join("")}</div>`
+                : "<p>Henüz tekrarlayan ödeme eklenmedi.</p>";
+        }
+        function checkRecurringPaymentReminders() {
+            const upcoming = recurringPaymentData.filter(payment =>
+                payment.isActive && Math.ceil((nextRecurringDueDate(payment.dueDay) - new Date()) / (1000 * 60 * 60 * 24)) <= 3);
+            if (!upcoming.length) return;
+            const key = `recurringReminderShown-${todayInIstanbul()}`;
+            if (sessionStorage.getItem(key)) return;
+            sessionStorage.setItem(key, "1");
+            const names = upcoming.map(payment => `${payment.name} (${formatMoney(payment.amount)})`).join(", ");
+            showAppResponse(`Yaklaşan ödemelerin var: ${names}`);
+        }
+        async function createRecurringPayment(event) {
+            event.preventDefault();
+            const result = await readResponse(await fetch("/api/v1/recurring-payments", {
+                method: "POST", headers: authHeaders(true),
+                body: JSON.stringify({
+                    name: $("recurringPaymentName").value.trim(),
+                    amount: Number($("recurringPaymentAmount").value),
+                    dueDay: Number($("recurringPaymentDay").value),
+                    category: $("recurringPaymentCategory").value
+                })
+            }));
+            if (result.response.ok) {
+                alert("Tekrarlayan ödeme eklendi.");
+                $("recurringPaymentForm").reset();
+                loadRecurringPayments();
+            }
+        }
+        async function toggleRecurringPayment(id) {
+            const result = await readResponse(await fetch(`/api/v1/recurring-payments/${id}/toggle`, {
+                method: "PUT", headers: authHeaders()
+            }));
+            if (result.response.ok) loadRecurringPayments();
+        }
+        async function deleteRecurringPayment(id) {
+            if (!(await customConfirm("Bu tekrarlayan ödeme kaldırılsın mı?"))) return;
+            const result = await readResponse(await fetch(`/api/v1/recurring-payments/${id}`, {
+                method: "DELETE", headers: authHeaders()
+            }));
+            if (result.response.ok) loadRecurringPayments();
+        }
+        async function checkBudgetLimitAlerts() {
+            if (!requireLogin() || isAdmin()) return;
+            const key = `limitAlertShown-${todayInIstanbul()}`;
+            if (sessionStorage.getItem(key)) return;
+            const result = await readResponse(await fetch("/api/v1/budget-limits", { headers: authHeaders() }));
+            if (!result.response.ok) return;
+            const over = result.data.filter(limit => Number(limit.spent) >= Number(limit.limitAmount));
+            const near = result.data.filter(limit => Number(limit.spent) < Number(limit.limitAmount) && Number(limit.spent) >= Number(limit.limitAmount) * 0.9);
+            if (!over.length && !near.length) return;
+            sessionStorage.setItem(key, "1");
+            const parts = [];
+            if (over.length) parts.push(`Limit aşıldı: ${over.map(item => item.category).join(", ")}`);
+            if (near.length) parts.push(`Limite yaklaşıyor: ${near.map(item => item.category).join(", ")}`);
+            showAppResponse(parts.join(" · "));
+        }
+        function exportBudgetReport() {
+            const month = $("reportMonth").value;
+            const entries = budgetEntryData.filter(entry => String(entry.entryDate).slice(0, 7) === month);
+            if (!entries.length) {
+                alert("Dışa aktarılacak kayıt bulunmuyor.");
+                return;
+            }
+            const escapeCsv = value => `"${String(value ?? "").replaceAll('"', '""')}"`;
+            const rows = [
+                ["Tarih", "Açıklama", "Kategori", "Tür", "Tutar", "Kaynak"],
+                ...entries.map(entry => [formatDate(entry.entryDate), entry.description, entry.category, entry.type === "Income" ? "Gelir" : "Gider", entry.amount, entry.source || ""])
+            ];
+            const csv = "\ufeff" + rows.map(row => row.map(escapeCsv).join(";")).join("\n");
+            const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `butce-raporu-${month}.csv`;
+            link.click();
+            URL.revokeObjectURL(url);
         }
         function useAccountForTransfer(accountId) {
             $("senderAccountId").value = accountId;
@@ -1688,7 +2060,7 @@
         }
         async function toggleUserStatus(userId, isActive) {
             const action = isActive ? "pasifleştir" : "aktifleştir";
-            if (!confirm(`Bu kullanıcı ${action}ilsin mi?`)) return;
+            if (!(await customConfirm(`Bu kullanıcı ${action}ilsin mi?`))) return;
             const result = await readResponse(await fetch(`/api/v1/users/${userId}/status`, {
                 method: "PUT", headers: authHeaders(true), body: JSON.stringify({ isActive: !isActive })
             }));
@@ -1753,7 +2125,7 @@
             }
         }
         async function approveAllUsers() {
-            if (!confirm("Tüm bekleyen kullanıcılar onaylansın mı?")) return;
+            if (!(await customConfirm("Tüm bekleyen kullanıcılar onaylansın mı?"))) return;
             const result = await readResponse(await fetch("/api/v1/users/approve-all-pending", {
                 method: "POST", headers: authHeaders()
             }));
@@ -1764,7 +2136,7 @@
             }
         }
         async function rejectUser(userId) {
-            if (!confirm("Bu kullanıcı başvurusu reddedilsin mi?")) return;
+            if (!(await customConfirm("Bu kullanıcı başvurusu reddedilsin mi?"))) return;
             const result = await readResponse(await fetch(`/api/v1/users/${userId}/reject`, {
                 method: "DELETE", headers: authHeaders()
             }));
@@ -1777,7 +2149,7 @@
             const message = isApproved
                 ? "Bu kullanıcı, müşterisi ve bağlı hesap/transfer kayıtları silinebilir. Devam edilsin mi?"
                 : "Bu kullanıcı silinsin mi?";
-            if (!confirm(message)) return;
+            if (!(await customConfirm(message))) return;
             const result = await readResponse(await fetch(`/api/v1/users/${userId}`, {
                 method: "DELETE", headers: authHeaders()
             }));
@@ -1858,7 +2230,7 @@
             $("customerCancelButton").hidden = false;
         }
         async function deleteCustomer(id) {
-            if (!confirm("Bu müşteri silinsin mi?")) return;
+            if (!(await customConfirm("Bu müşteri silinsin mi?"))) return;
             const result = await readResponse(await fetch(`/api/v1/customers/${id}`, {
                 method: "DELETE", headers: authHeaders()
             }));
@@ -1910,9 +2282,21 @@
             }
         }
         $("loginForm").addEventListener("submit", login);
+        $("themeToggleButton").addEventListener("click", toggleTheme);
         $("appResponseClose").addEventListener("click", () => {
             clearTimeout(responseTimer);
             $("appResponse").hidden = true;
+        });
+        $("confirmModalOk").addEventListener("click", () => resolveModal(true));
+        $("confirmModalCancel").addEventListener("click", () => resolveModal(false));
+        $("confirmModal").addEventListener("click", event => {
+            if (event.target.id === "confirmModal") resolveModal(false);
+        });
+        $("confirmModalInput").addEventListener("keydown", event => {
+            if (event.key === "Enter") { event.preventDefault(); resolveModal(true); }
+        });
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape" && !$("confirmModal").hidden) resolveModal(false);
         });
         $("welcomeClose").addEventListener("click", () => {
             clearTimeout(welcomeTimer);
@@ -1979,6 +2363,13 @@
             $("loginUserName").focus();
         });
         $("accountForm").addEventListener("submit", createAccount);
+        $("cardForm").addEventListener("submit", createCard);
+        $("refreshCardsButton").addEventListener("click", loadAccounts);
+        $("savingsGoalForm").addEventListener("submit", createSavingsGoal);
+        $("refreshSavingsGoalsButton").addEventListener("click", loadSavingsGoals);
+        $("recurringPaymentForm").addEventListener("submit", createRecurringPayment);
+        $("refreshRecurringButton").addEventListener("click", loadRecurringPayments);
+        $("exportReportButton").addEventListener("click", exportBudgetReport);
         $("depositForm").addEventListener("submit", createDeposit);
         $("loadDepositRequestsButton").addEventListener("click", loadDepositRequests);
         $("transferForm").addEventListener("submit", createTransfer);
@@ -2048,20 +2439,24 @@
             activeSectionId = targetId;
             document.querySelectorAll(".app-content").forEach(element => {
                 element.classList.toggle("section-active", element.id === targetId);
-                element.style.display = element.classList.contains("intro") || element.id === targetId ? "block" : "none";
+                element.style.display = element.id === targetId ? "block" : "none";
             });
             document.querySelectorAll(".sidebar button[data-target]").forEach(item => {
                 item.classList.toggle("active", item.dataset.target === targetId);
             });
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
-        $("profileTopButton").addEventListener("click", () => navigateToSection("profileSection"));
         document.querySelectorAll(".sidebar button[data-target]").forEach(button => {
             button.addEventListener("click", () => {
                 navigateToSection(button.dataset.target);
             });
         });
         updateSession();
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/sw.js").catch(() => {});
+            });
+        }
     </script>
 </body>
 </html>

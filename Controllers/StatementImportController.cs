@@ -20,10 +20,15 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
 {
     [HttpPost("import")]
     [RequestSizeLimit(10 * 1024 * 1024)]
-    public async Task<IActionResult> Import(IFormFile file, [FromQuery] bool preview = false)
+    public async Task<IActionResult> Import(IFormFile file, [FromQuery] int accountId, [FromQuery] bool preview = false)
     {
         var userId = GetCurrentUserId();
         if (userId is null) return Unauthorized();
+
+        if (!await IsOwnedAccount(accountId, userId.Value))
+        {
+            return NotFound(new { message = "Ekstrenin ait olduğu kart veya hesap bulunamadı." });
+        }
 
         var extension = Path.GetExtension(file?.FileName ?? "");
         if (file is null || file.Length == 0 ||
@@ -35,7 +40,7 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
 
         if (extension.Equals(".pdf", StringComparison.OrdinalIgnoreCase))
         {
-            return await ImportPdf(file, preview, userId.Value);
+            return await ImportPdf(file, preview, userId.Value, accountId);
         }
 
         try
@@ -66,7 +71,7 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
 
             FindHeader(headers, ["tur", "islemturu", "type"], out var typeColumn);
             var existing = await db.BudgetEntries
-                .Where(entry => entry.UserId == userId)
+                .Where(entry => entry.UserId == userId && entry.AccountId == accountId)
                 .Select(entry => new { entry.EntryDate, entry.Description, entry.Amount, entry.Type })
                 .ToListAsync();
             var known = existing.Select(Key).ToHashSet();
@@ -93,6 +98,7 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
                 var entry = new BudgetEntry
                 {
                     UserId = userId.Value,
+                    AccountId = accountId,
                     Type = type,
                     Category = GuessCategory(description, type),
                     Description = description,
@@ -152,7 +158,7 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
         }
     }
 
-    private async Task<IActionResult> ImportPdf(IFormFile file, bool preview, int userId)
+    private async Task<IActionResult> ImportPdf(IFormFile file, bool preview, int userId, int accountId)
     {
         try
         {
@@ -161,10 +167,10 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
             // Bankalar aynı bilgileri farklı sütun sıralarında verebilir. Önce
             // PDF içindeki başlıkların koordinatlarını kullanarak genel okuyucuyu
             // deneriz; başlık bulunamazsa eski Yapı Kredi okuyucusu devreye girer.
-            var entries = ParsePdfEntries(document, userId);
+            var entries = ParsePdfEntries(document, userId, accountId);
             await ApplyMerchantRules(entries, userId);
             var existing = await db.BudgetEntries
-                .Where(entry => entry.UserId == userId)
+                .Where(entry => entry.UserId == userId && entry.AccountId == accountId)
                 .ToListAsync();
             var known = existing.Select(Key).ToHashSet();
             var uniqueEntries = new List<BudgetEntry>();
@@ -229,7 +235,7 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
         }
     }
 
-    private static List<BudgetEntry> ParsePdfEntries(PdfDocument document, int userId)
+    private static List<BudgetEntry> ParsePdfEntries(PdfDocument document, int userId, int accountId)
     {
         var entries = new List<BudgetEntry>();
         PdfColumnLayout? layout = null;
@@ -238,21 +244,21 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
             // Bankalar çoğu zaman başlığı yalnızca ilk sayfaya koyar. İlk
             // sayfada bulunan sütun düzenini sonraki sayfalara da uygularız.
             if (TryGetPdfColumnLayout(page, out var detectedLayout)) layout = detectedLayout;
-            if (layout is not null) entries.AddRange(ParsePdfPageByLayout(page, userId, layout));
+            if (layout is not null) entries.AddRange(ParsePdfPageByLayout(page, userId, accountId, layout));
         }
 
         var text = string.Join("\n", document.GetPages().Select(page => page.Text));
-        var fallbackEntries = ParsePdfEntries(text, userId);
+        var fallbackEntries = ParsePdfEntries(text, userId, accountId);
         // Bazı bankalarda başlık satırları metin katmanında parçalı olduğu için
         // koordinat okuyucu az satır yakalayabilir. İki sonucu karşılaştırıp
         // daha fazla işlem yakalayan parser'ın sonucunu kullanırız.
         return entries.Count >= fallbackEntries.Count ? entries : fallbackEntries;
     }
 
-    private static List<BudgetEntry> ParsePdfPageByHeaders(Page page, int userId)
+    private static List<BudgetEntry> ParsePdfPageByHeaders(Page page, int userId, int accountId)
     {
         return TryGetPdfColumnLayout(page, out var layout)
-            ? ParsePdfPageByLayout(page, userId, layout)
+            ? ParsePdfPageByLayout(page, userId, accountId, layout)
             : [];
     }
 
@@ -327,7 +333,7 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
         return previousAmountHeader?.BoundingBox.Left ?? amountWord.BoundingBox.Left;
     }
 
-    private static List<BudgetEntry> ParsePdfPageByLayout(Page page, int userId, PdfColumnLayout layout)
+    private static List<BudgetEntry> ParsePdfPageByLayout(Page page, int userId, int accountId, PdfColumnLayout layout)
     {
         var words = page.GetWords().ToList();
         if (words.Count == 0) return [];
@@ -408,6 +414,7 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
             entries.Add(new BudgetEntry
             {
                 UserId = userId,
+                AccountId = accountId,
                 EntryDate = ToIstanbulUtc(date),
                 Description = description,
                 Amount = decimal.Round(Math.Abs(rawAmount), 2),
@@ -483,7 +490,7 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
     [GeneratedRegex(@"^\d{1,2}:\d{2}(:\d{2})?$")]
     private static partial Regex TimeTokenRegex();
 
-    private static List<BudgetEntry> ParsePdfEntries(string text, int userId)
+    private static List<BudgetEntry> ParsePdfEntries(string text, int userId, int accountId)
     {
         var entries = new List<BudgetEntry>();
         // Bazı banka PDF'lerinde satır sonları metin olarak bulunmaz. Bu yüzden
@@ -519,6 +526,7 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
             entries.Add(new BudgetEntry
             {
                 UserId = userId,
+                AccountId = accountId,
                 EntryDate = ToIstanbulUtc(entryDate),
                 Description = description,
                 Amount = decimal.Round(Math.Abs(rawAmount), 2),
@@ -542,8 +550,13 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
             return BadRequest(new { message = "Kaydedilecek ekstre işlemi bulunamadı." });
         }
 
+        if (!await IsOwnedAccount(request.AccountId, userId.Value))
+        {
+            return NotFound(new { message = "Ekstrenin ait olduğu kart veya hesap bulunamadı." });
+        }
+
         var existing = await db.BudgetEntries
-            .Where(entry => entry.UserId == userId)
+            .Where(entry => entry.UserId == userId && entry.AccountId == request.AccountId)
             .Select(entry => new { entry.EntryDate, entry.Description, entry.Amount, entry.Type })
             .ToListAsync();
         var known = existing
@@ -564,6 +577,7 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
             var entry = new BudgetEntry
             {
                 UserId = userId.Value,
+                AccountId = request.AccountId,
                 EntryDate = row.EntryDate,
                 Description = row.Description.Trim(),
                 Amount = decimal.Round(Math.Abs(row.Amount), 2),
@@ -647,6 +661,19 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
     {
         var value = User.FindFirstValue(ClaimTypes.NameIdentifier);
         return int.TryParse(value, out var userId) ? userId : null;
+    }
+
+    private async Task<bool> IsOwnedAccount(int accountId, int userId)
+    {
+        var customerId = await db.Users
+            .Where(user => user.Id == userId)
+            .Select(user => user.CustomerId)
+            .SingleOrDefaultAsync();
+
+        if (customerId is null) return false;
+
+        return await db.Accounts.AnyAsync(account =>
+            account.Id == accountId && account.CustomerId == customerId);
     }
 
     private static string Key(BudgetEntry entry) =>
@@ -897,5 +924,5 @@ public partial class StatementImportController(BankDbContext db) : ControllerBas
     }
 }
 
-public record ConfirmStatementImportRequest(List<ConfirmStatementImportRow> Rows);
+public record ConfirmStatementImportRequest(int AccountId, List<ConfirmStatementImportRow> Rows);
 public record ConfirmStatementImportRow(DateTime EntryDate, string Description, decimal Amount, string Type, string Category, string? Source = null, string? Treatment = null, string? PersonName = null, string? Note = null);
