@@ -1,0 +1,15 @@
+meta {
+  name: Kayıtları Listele
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/budget-entries
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

@@ -1,0 +1,26 @@
+meta {
+  name: Kart Oluştur
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/accounts
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Bonus Kredi Kartım",
+    "type": "CreditCard"
+  }
+}

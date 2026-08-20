@@ -1,0 +1,29 @@
+meta {
+  name: Kayıt Ekle
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/budget-entries
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "type": "Expense",
+    "category": "Market",
+    "description": "Haftalık market",
+    "amount": 450.50,
+    "entryDate": "2026-08-18"
+  }
+}

@@ -823,6 +823,10 @@
 
     <script>
         const $ = id => document.getElementById(id);
+        (function bootstrapThemeFromUrl() {
+            const bootstrapTheme = new URLSearchParams(location.search).get("theme");
+            if (bootstrapTheme === "dark" || bootstrapTheme === "light") localStorage.setItem("theme", bootstrapTheme);
+        })();
 
         function applyTheme(theme) {
             document.documentElement.dataset.theme = theme;
@@ -842,7 +846,7 @@
         applyTheme(localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
 
         let responseTimer;
-        let activeSectionId = "dashboardSection";
+        let activeSectionId = new URLSearchParams(location.search).get("section") || "dashboardSection";
         function showAppResponse(message) {
             const text = String(message || "");
             const isError = /başarısız|hatalı|hata|zorunlu|bulunamadı|yetkin|reddedildi|geçersiz|yetersiz|seçmelisin|seçin|yazmalısın|aşıldı|yaklaşıyor|yaklaşan/i.test(text);
@@ -2452,6 +2456,9 @@
             });
         });
         updateSession();
+        document.querySelectorAll(".sidebar button[data-target]").forEach(item => {
+            item.classList.toggle("active", item.dataset.target === activeSectionId);
+        });
         if ("serviceWorker" in navigator) {
             window.addEventListener("load", () => {
                 navigator.serviceWorker.register("/sw.js").catch(() => {});

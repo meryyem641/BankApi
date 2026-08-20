@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "Finansal Bütçe ve Harcama Yönetim Sistemi API",
+  "type": "collection",
+  "ignore": ["node_modules", ".git"]
+}

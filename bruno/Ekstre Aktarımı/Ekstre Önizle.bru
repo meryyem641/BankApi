@@ -1,0 +1,24 @@
+meta {
+  name: Ekstre Önizle
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/statements/import?preview=true&accountId=32
+  body: multipartForm
+  auth: bearer
+}
+
+params:query {
+  preview: true
+  accountId: 32
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:multipart-form {
+  file: @file()
+}

@@ -74,7 +74,9 @@ builder.Services.AddSwaggerGen(options =>
         ["BudgetCategories"] = "Bütçe Kategorileri",
         ["MerchantCategoryRules"] = "İşletme Kategori Kuralları",
         ["StatementImport"] = "Ekstre Aktarımı",
-        ["DepositRequests"] = "Para Yatırma Talepleri"
+        ["DepositRequests"] = "Para Yatırma Talepleri",
+        ["SavingsGoals"] = "Tasarruf Hedefleri",
+        ["RecurringPayments"] = "Tekrarlayan Ödemeler"
     };
     options.TagActionsBy(api =>
     {

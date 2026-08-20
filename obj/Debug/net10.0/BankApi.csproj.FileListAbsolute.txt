@@ -86,6 +86,6 @@
 /Users/meryemmacbookair/Desktop/BankApi/obj/Debug/net10.0/BankApi.genruntimeconfig.cache
 /Users/meryemmacbookair/Desktop/BankApi/obj/Debug/net10.0/ref/BankApi.dll
 /Users/meryemmacbookair/Desktop/BankApi/obj/Debug/net10.0/compressed/ifixzr8u5p-{0}-6ms12w57f0-6ms12w57f0.gz
-/Users/meryemmacbookair/Desktop/BankApi/obj/Debug/net10.0/compressed/mkx0vq31pz-{0}-eriud8wqat-eriud8wqat.gz
 /Users/meryemmacbookair/Desktop/BankApi/obj/Debug/net10.0/compressed/kv252q39ks-{0}-tmb3bz2uod-tmb3bz2uod.gz
 /Users/meryemmacbookair/Desktop/BankApi/obj/Debug/net10.0/compressed/oaved51xru-{0}-05amb6oja7-05amb6oja7.gz
+/Users/meryemmacbookair/Desktop/BankApi/obj/Debug/net10.0/compressed/mkx0vq31pz-{0}-0ci5v1tzbf-0ci5v1tzbf.gz

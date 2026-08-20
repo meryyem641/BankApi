@@ -1,0 +1,19 @@
+meta {
+  name: Limitleri Getir
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/budget-limits?month=2026-08
+  body: none
+  auth: bearer
+}
+
+params:query {
+  month: 2026-08
+}
+
+auth:bearer {
+  token: {{token}}
+}
