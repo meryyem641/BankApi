@@ -5,4 +5,5 @@ obj/
 output/
 *.db-shm
 *.db-wal
+docs/*.md
 
